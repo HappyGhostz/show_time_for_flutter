@@ -35,7 +35,9 @@ class LuncherImage extends StatefulWidget{
 class LuncherImageState extends State<LuncherImage>{
   showNextPage(){
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:(context){
-      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top,SystemUiOverlay.bottom]);
+      SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
       return HomeWidget();
     }), (route) => route == null);
   }
