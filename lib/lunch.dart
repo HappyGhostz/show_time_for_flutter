@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:show_time_for_flutter/downtime.dart';
 import 'package:show_time_for_flutter/home.dart';
+import 'package:show_time_for_flutter/utils/provider.dart';
 
-void main() => runApp(ShowTimeApp());
+void main() async{
+  final provider = new ProviderForDB();
+  await provider.init(true);
+  runApp(ShowTimeApp());
+}
 
 
 class ShowTimeApp extends StatefulWidget{
@@ -45,7 +50,7 @@ class LuncherImageState extends State<LuncherImage>{
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Image.asset("images/splash.gif",
+        Image.asset("assets/images/splash.gif",
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           fit: BoxFit.cover,),
