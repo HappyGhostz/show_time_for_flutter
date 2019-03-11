@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:show_time_for_flutter/channel/channel.dart';
-import 'package:show_time_for_flutter/channel/channel_info.dart';
+import 'package:show_time_for_flutter/ui/channel/channel.dart';
+import 'package:show_time_for_flutter/ui/channel/channel_info.dart';
+import 'package:show_time_for_flutter/ui/news/news_list.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -20,10 +21,12 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ChannelModel channelModel;
   List<Channel> tabs = [];
+  List<String> videoTabs = ["史诗大片", "恢弘大剧", "本地视频"];
+  List<String> bookTabs = ["书架", "分类", "社区", "排行榜"];
+  List<String> musicTabs = ["本地音乐", "推荐歌单", "排行榜"];
   int _selectedIndex = 0;
   final _selectedTitles = [
     "新闻",
@@ -49,8 +52,13 @@ class HomePageState extends State<HomePage>
     initSelectChannels();
     _tabController = TabController(vsync: this, length: tabs.length);
     _scrollViewController = ScrollController(initialScrollOffset: 0.0);
+    _scrollViewController.addListener((){
+      var position = _scrollViewController.position;
+      print("position:$position");
+    });
   }
-  changeTabController(){
+
+  changeTabController() {
     _tabController = TabController(vsync: this, length: tabs.length);
     _scrollViewController = ScrollController(initialScrollOffset: 0.0);
   }
@@ -68,59 +76,109 @@ class HomePageState extends State<HomePage>
     _scrollViewController.dispose();
     super.dispose();
   }
-  List<Widget> buildTabs(){
+
+  List<Widget> buildTabs() {
     List<Widget> widgets = new List<Widget>();
-    widgets =tabs.map((channel){
-      return new Tab(text: channel.name,);
-    }).toList();
+    if (_selectedIndex == 0) {
+      widgets = tabs.map((channel) {
+        return new Tab(
+          text: channel.name,
+        );
+      }).toList();
+    } else if (_selectedIndex == 1) {
+      widgets = videoTabs.map((title) {
+        return new Tab(
+          text: title,
+        );
+      }).toList();
+    } else if (_selectedIndex == 2) {
+      widgets = musicTabs.map((title) {
+        return new Tab(
+          text: title,
+        );
+      }).toList();
+    } else if (_selectedIndex == 3) {
+      widgets = bookTabs.map((title) {
+        return new Tab(
+          text: title,
+        );
+      }).toList();
+    }
+
     return widgets;
   }
-  List<Widget> buildTabViewPage(){
+
+  bool _isScrollable() {
+    if (_selectedIndex == 0) {
+      //||_selectedIndex==1
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  List<Widget> buildTabViewPage() {
     List<Widget> widgets = new List<Widget>();
-    widgets =tabs.map((channel){
-      return new Text(channel.name);
-    }).toList();
+    if (_selectedIndex == 0) {
+      widgets = tabs.map((channel) {
+        return new NewsListPage(
+          typeId: channel.typeId,
+        );
+      }).toList();
+    } else if (_selectedIndex == 1) {
+      widgets = videoTabs.map((title) {
+        return new Text(title);
+      }).toList();
+    } else if (_selectedIndex == 2) {
+      widgets = musicTabs.map((title) {
+        return new Text(title);
+      }).toList();
+    } else if (_selectedIndex == 3) {
+      widgets = bookTabs.map((title) {
+        return new Text(title);
+      }).toList();
+    }
     return widgets;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                title: Text(_selectedTitles.elementAt(_selectedIndex)),
-                actions: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return ChannelPage();
-                        })).then((value) {
-                          tabs = value;
-                          setState(() {
-                            changeTabController();
-                          });
-                        });
-                      })
-                ],
-                pinned: true,
-                floating: true,
-                forceElevated: boxIsScrolled,
-                bottom: TabBar(
-                  isScrollable: true,
-                  controller: _tabController,
-                  tabs: buildTabs(),
-                ),
-              )
-            ];
-          },
-          controller: _scrollViewController,
-          body: TabBarView(
-            children: buildTabViewPage(),
-            controller: _tabController,
-          )),
+      appBar: AppBar(
+        title: Text(_selectedTitles.elementAt(_selectedIndex)),
+        actions: _buildActions(),
+        bottom: TabBar(
+          isScrollable: _isScrollable(),
+          controller: _tabController,
+          tabs: buildTabs(),
+        ),
+      ),
+      body: TabBarView(
+        children: buildTabViewPage(),
+        controller: _tabController,
+      ),
+//      NestedScrollView(
+//          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
+//            return <Widget>[
+//              SliverAppBar(
+//                title: Text(_selectedTitles.elementAt(_selectedIndex)),
+//                actions: _buildActions(),
+//                pinned: true,
+//                floating: true,
+//                forceElevated: boxIsScrolled,
+//                bottom: TabBar(
+//                  isScrollable: _isScrollable(),
+//                  controller: _tabController,
+//                  tabs: buildTabs(),
+//                ),
+//              )
+//            ];
+//          },
+//          controller: _scrollViewController,
+//          body: TabBarView(
+//            children: buildTabViewPage(),
+//            controller: _tabController,
+//          )),
       drawer: Drawer(
         child: _onDrawViewPage(),
       ),
@@ -175,11 +233,54 @@ class HomePageState extends State<HomePage>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      changeTabController();
     });
   }
 
   Color _selectIconColor(int index) {
     return _selectedIndex == index ? Colors.white : Colors.grey;
+  }
+
+  List<Widget> _buildActions() {
+    if (_selectedIndex == 0) {
+      return <Widget>[
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return ChannelPage();
+              })).then((value) {
+                setState(() {
+                  tabs = value;
+                  changeTabController();
+                });
+              });
+            })
+      ];
+    } else if (_selectedIndex == 1) {
+      return [];
+    } else if (_selectedIndex == 2) {
+      return <Widget>[
+        IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+//              Navigator.of(context)
+//                  .push(MaterialPageRoute(builder: (context) {
+//                return ChannelPage();
+//              })).then((value) {
+//                tabs = value;
+//                setState(() {
+//                  changeTabController();
+//                });
+//              });
+            })
+      ];
+    } else if (_selectedIndex == 3) {
+      return <Widget>[
+        IconButton(icon: Icon(Icons.search), onPressed: () {}),
+        IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+      ];
+    }
   }
 
   Widget _onDrawViewPage() {

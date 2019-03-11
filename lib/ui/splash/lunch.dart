@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:show_time_for_flutter/downtime.dart';
-import 'package:show_time_for_flutter/home.dart';
+import 'package:show_time_for_flutter/ui/splash/downtime.dart';
+import 'package:show_time_for_flutter/ui/home.dart';
 import 'package:show_time_for_flutter/utils/provider.dart';
 
 void main() async{

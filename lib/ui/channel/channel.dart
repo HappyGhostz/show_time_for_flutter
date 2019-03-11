@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:show_time_for_flutter/channel/channel_info.dart';
+import 'package:show_time_for_flutter/ui/channel/channel_info.dart';
 import 'dart:convert';
 import 'package:show_time_for_flutter/widgets/drag_grid.dart';
 
