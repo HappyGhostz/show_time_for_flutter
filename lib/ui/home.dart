@@ -44,6 +44,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TextStyle style = TextStyle(color: Colors.black);
   TabController _tabController;
   ScrollController _scrollViewController;
+  int _currentTabIndex=0;
 
   @override
   void initState() {
@@ -51,15 +52,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     channelModel = new ChannelModel();
     initSelectChannels();
     _tabController = TabController(vsync: this, length: tabs.length);
-    _scrollViewController = ScrollController(initialScrollOffset: 0.0);
-    _scrollViewController.addListener((){
-      var position = _scrollViewController.position;
-      print("position:$position");
+    _tabController.addListener((){
+      _currentTabIndex = _tabController.index;
     });
+    _scrollViewController = ScrollController(initialScrollOffset: 0.0);
   }
 
   changeTabController() {
     _tabController = TabController(vsync: this, length: tabs.length);
+    if(_currentTabIndex>0&&_currentTabIndex<tabs.length){
+      _tabController.animateTo(_currentTabIndex);
+    }
+    _tabController.addListener((){
+      _currentTabIndex = _tabController.index;
+    });
     _scrollViewController = ScrollController(initialScrollOffset: 0.0);
   }
 
@@ -79,6 +85,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   List<Widget> buildTabs() {
     List<Widget> widgets = new List<Widget>();
+    if(tabs==null){
+      widgets.add(new Tab());
+      return widgets;
+    };
     if (_selectedIndex == 0) {
       widgets = tabs.map((channel) {
         return new Tab(
