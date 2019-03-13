@@ -3,19 +3,8 @@ import 'package:show_time_for_flutter/modul/news_info.dart';
 import 'dart:math';
 import 'package:show_time_for_flutter/widgets/label_view.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
+import 'package:show_time_for_flutter/ui/news/normal/news_detail.dart';
 
-List<String> images = [
-  "assets/images/no_data_one.png",
-  "assets/images/no_data_two.png",
-  "assets/images/no_data_three.png",
-  "assets/images/no_data_four.png",
-  "assets/images/no_data_five.png",
-  "assets/images/no_data_sex.png",
-  "assets/images/no_data_seven.png",
-  "assets/images/no_data_eight.png",
-  "assets/images/no_data_nine.png",
-  "assets/images/no_data_ten.png",
-];
 String NEWS_ITEM_SPECIAL = "special";
 String NEWS_ITEM_PHOTO_SET = "photoset";
 
@@ -31,30 +20,55 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
   @override
   Widget build(BuildContext context) {
     if (isNewsPhotoSet(widget.newsType.skipType)) {
-      return LabelViewDecoration(
-          size: Size(80.0, 80.0),
-          labelColor: Colors.blue,
-          labelAlignment: LabelAlignment.leftTop,
-          useAngle: true,
-          labelText: "图集",
-          labelTextColor: Colors.white,
-          child: _builderPhotosItem());
-    } else {
-      if (isNewsSpecial(widget.newsType.skipType)) {
-        return LabelViewDecoration(
+      return GestureDetector(
+        child: LabelViewDecoration(
             size: Size(80.0, 80.0),
-            labelColor: Colors.red,
+            labelColor: Colors.blue,
             labelAlignment: LabelAlignment.leftTop,
             useAngle: true,
-            labelText: "专题",
+            labelText: "图集",
             labelTextColor: Colors.white,
-            child: _builderItem());
+            child: _builderPhotosItem()),
+        onTap: (){
+          _handlePhotosNews();
+        },
+      );
+    } else {
+      if (isNewsSpecial(widget.newsType.skipType)) {
+        return GestureDetector(
+          child: LabelViewDecoration(
+              size: Size(80.0, 80.0),
+              labelColor: Colors.red,
+              labelAlignment: LabelAlignment.leftTop,
+              useAngle: true,
+              labelText: "专题",
+              labelTextColor: Colors.white,
+              child: _builderItem()),
+          onTap: (){
+            _handleSpecialNews();
+          },
+        );
       } else {
-        return _builderItem();
+        return GestureDetector(
+          child: _builderItem(),
+          onTap: (){
+            _handleNormalNews();
+          },
+        );
       }
     }
   }
+  _handleNormalNews(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      return NormalNewsDetailPage(postId: widget.newsType.postid,);
+    }));
+  }
+  _handleSpecialNews(){
 
+  }
+  _handlePhotosNews(){
+
+  }
   Widget _builderPhotosItem() {
     return Container(
       margin: EdgeInsets.all(8.0),
@@ -93,13 +107,9 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
     Expanded expanded = Expanded(
       child: Container(
           padding: EdgeInsets.only(right: 2.0),
-          child: ImageUtils.showFadeImageForHeight(widget.newsType.imgsrc, 75.0, BoxFit.cover)),
+          child: ImageUtils.showFadeImageForHeight(
+              widget.newsType.imgsrc, 75.0, BoxFit.cover)),
     );
-//    FadeInImage.assetNetwork(
-//        placeholder: getAssetsImage(),
-//        image: widget.newsType.imgsrc,
-//        height: 75.0,
-//        fit: BoxFit.cover)
     widgets.add(expanded);
     List<Imgextra> imgextras = widget.newsType.imgextra;
     if (imgextras != null && imgextras.length > 0) {
@@ -107,13 +117,8 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
         var expanded2 = Expanded(
           child: Container(
               padding: EdgeInsets.only(left: 2.0, right: 2.0),
-              child: ImageUtils.showFadeImageForHeight(imgextras[i].imgsrc, 75.0, BoxFit.cover)
-//              FadeInImage.assetNetwork(
-//                  placeholder: getAssetsImage(),
-//                  image: imgextras[i].imgsrc,
-//                  height: 75.0,
-//                  fit: BoxFit.cover)
-          ),
+              child: ImageUtils.showFadeImageForHeight(
+                  imgextras[i].imgsrc, 75.0, BoxFit.cover)),
         );
         widgets.add(expanded2);
       }
@@ -127,7 +132,8 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
       child: Row(
         children: <Widget>[
           Container(
-            child:ImageUtils.showFadeImageForSize(widget.newsType.imgsrc, 75.0,100, BoxFit.cover),
+            child: ImageUtils.showFadeImageForSize(
+                widget.newsType.imgsrc, 75.0, 100, BoxFit.cover),
           ),
 
           ///Expanded加上这个小部件放置 内容溢出
@@ -170,12 +176,6 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
       ),
     );
   }
-
-  String getAssetsImage() {
-    var nextInt = Random().nextInt(images.length - 1);
-    return images[nextInt];
-  }
-
   /**
    * 判断新闻类型
    *

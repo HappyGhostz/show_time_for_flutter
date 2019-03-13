@@ -6,6 +6,7 @@ import 'package:show_time_for_flutter/widgets/banner.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/ui/news/news_item.dart';
 import 'dart:math';
+import 'package:show_time_for_flutter/utils/image_utils.dart';
 
 int INIT_PAGE = 20;
 
@@ -200,11 +201,6 @@ class NewsListPageState extends State<NewsListPage>
         ),
       ),
     );
-  }
-
-  String getAssetsImage() {
-    var nextInt = Random().nextInt(images.length - 1);
-    return images[nextInt];
   }
 
   @override

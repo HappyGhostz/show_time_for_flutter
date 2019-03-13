@@ -31,7 +31,7 @@ dependencies:
   #xml解析
   xml: ^3.3.0
   gbk2utf8: ^1.0.1
-#  cached_network_image: ^0.7.0
+  flutter_html: ^0.9.6
 
 
 dev_dependencies:

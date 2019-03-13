@@ -5,6 +5,7 @@ import 'package:show_time_for_flutter/modul/news_info.dart';
 import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:show_time_for_flutter/modul/photos.dart';
 import 'dart:convert';
+import 'package:show_time_for_flutter/modul/news_detail.dart';
 
 class NewsServiceApi {
   final String HEAD_LINE_NEWS = "T1348647909107";
@@ -15,7 +16,7 @@ class NewsServiceApi {
     newsUtils = NetUtils();
     newsClient = newsUtils.getNewsBaseClient();
   }
-
+  //获取新闻列表
   Future<NewsInfo> getnewsList(String id, int startPage) async {
     String type;
     if (id == HEAD_LINE_NEWS) {
@@ -34,6 +35,7 @@ class NewsServiceApi {
     }
   }
 
+
   //解析出图集URL
   Future<PhotoSet> getPhotos(String id) async {
     var photoResponse = await newsClient.get(
@@ -49,7 +51,18 @@ class NewsServiceApi {
     PhotoSet photoSet = PhotoSet.fromJson(photoJson);
     return photoSet;
   }
-
+  //获取新闻详情
+  Future<NewsDetail> getNewsDetail(String id) async {
+    try {
+      //404
+      var response =
+      await newsClient.get("/nc/article/$id/full.html");
+      NewsDetail newsInfo = NewsDetail.fromJson(id, response.data);
+      return newsInfo;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
   printError(DioError e) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx and is also not 304.
