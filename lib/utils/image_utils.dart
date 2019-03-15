@@ -33,6 +33,21 @@ class ImageUtils {
       );
     }
   }
+  static Widget showFadeImage(
+      String imageSrc, BoxFit boxFit) {
+    if (imageSrc == null||imageSrc=="") {
+      return Image.asset(
+        getAssetsImage(),
+        fit: boxFit,
+      );
+    } else {
+      return FadeInImage.assetNetwork(
+        placeholder: getAssetsImage(),
+        image: imageSrc,
+        fit: boxFit,
+      );
+    }
+  }
 
   static Widget showFadeImageForHeight(
       String imageSrc, double height, BoxFit boxFit) {

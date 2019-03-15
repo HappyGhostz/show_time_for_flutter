@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:show_time_for_flutter/widgets/label_view.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/ui/news/normal/news_detail.dart';
+import 'package:show_time_for_flutter/ui/news/special/special_detail.dart';
 
 String NEWS_ITEM_SPECIAL = "special";
 String NEWS_ITEM_PHOTO_SET = "photoset";
@@ -29,7 +30,7 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
             labelText: "图集",
             labelTextColor: Colors.white,
             child: _builderPhotosItem()),
-        onTap: (){
+        onTap: () {
           _handlePhotosNews();
         },
       );
@@ -44,31 +45,43 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
               labelText: "专题",
               labelTextColor: Colors.white,
               child: _builderItem()),
-          onTap: (){
+          onTap: () {
             _handleSpecialNews();
           },
         );
       } else {
         return GestureDetector(
           child: _builderItem(),
-          onTap: (){
+          onTap: () {
             _handleNormalNews();
           },
         );
       }
     }
   }
-  _handleNormalNews(){
-    Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return NormalNewsDetailPage(postId: widget.newsType.postid,);
+
+  _handleNormalNews() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return NormalNewsDetailPage(
+        postId: widget.newsType.postid,
+      );
     }));
   }
-  _handleSpecialNews(){
 
+  _handleSpecialNews() {
+    var specialID = widget.newsType.specialID;
+    if (specialID == null) {
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SpecialNewsDetailPage(
+        specialID: specialID,
+      );
+    }));
   }
-  _handlePhotosNews(){
 
-  }
+  _handlePhotosNews() {}
+
   Widget _builderPhotosItem() {
     return Container(
       margin: EdgeInsets.all(8.0),
@@ -147,7 +160,9 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
                 children: <Widget>[
                   new Container(
                     child: Text(
-                      widget.newsType.title,
+                      widget.newsType.title == null
+                          ? ""
+                          : widget.newsType.title,
                       softWrap: true,
                       maxLines: 2,
                     ),
@@ -158,11 +173,15 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
                       children: <Widget>[
                         Expanded(
                             child: Text(
-                          widget.newsType.source,
+                          widget.newsType.source == null
+                              ? ""
+                              : widget.newsType.source,
                           softWrap: true,
                         )),
                         Text(
-                          widget.newsType.ptime,
+                          widget.newsType.ptime == null
+                              ? ""
+                              : widget.newsType.ptime,
                           softWrap: false,
                         ),
                       ],
@@ -176,6 +195,7 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
       ),
     );
   }
+
   /**
    * 判断新闻类型
    *

@@ -86,8 +86,14 @@ class NewsType {
   String skipType;
 
   String cid;
+  String specialID;
 
-  NewsType(this.imgextra,this.template,this.skipID,this.lmodify,this.postid,this.source,this.title,this.mtime,this.hasImg,this.topicBackground,this.digest,this.photosetID,this.boardid,this.alias,this.hasAD,this.imgsrc,this.ptime,this.daynum,this.hasHead,this.imgType,this.order,this.editor,this.votecount,this.hasCover,this.docid,this.tname,this.priority,this.ads,this.ename,this.replyCount,this.imgsum,this.hasIcon,this.skipType,this.cid,);
+  NewsType(this.imgextra,this.template,this.skipID,this.lmodify,this.postid,this.source,
+      this.title,this.mtime,this.hasImg,this.topicBackground,this.digest,this.photosetID,
+      this.boardid,this.alias,this.hasAD,this.imgsrc,this.ptime,this.daynum,this.hasHead,
+      this.imgType,this.order,this.editor,this.votecount,this.hasCover,this.docid,
+      this.tname,this.priority,this.ads,this.ename,this.replyCount,this.imgsum,
+      this.hasIcon,this.skipType,this.cid,this.specialID);
 
   factory NewsType.fromJson(Map<String, dynamic> json){
     return NewsType(
@@ -130,7 +136,9 @@ class NewsType {
         json['imgsum'] as int,
         json['hasIcon'] as bool,
         json['skipType'] as String,
-        json['cid'] as String);
+        json['cid'] as String,
+        json['specialID'] as String,
+    );
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{

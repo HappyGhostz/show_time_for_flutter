@@ -6,6 +6,7 @@ import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:show_time_for_flutter/modul/photos.dart';
 import 'dart:convert';
 import 'package:show_time_for_flutter/modul/news_detail.dart';
+import 'package:show_time_for_flutter/modul/special_info.dart';
 
 class NewsServiceApi {
   final String HEAD_LINE_NEWS = "T1348647909107";
@@ -50,6 +51,18 @@ class NewsServiceApi {
     var photoJson = jsonDecode(photo);
     PhotoSet photoSet = PhotoSet.fromJson(photoJson);
     return photoSet;
+  }
+  //获取专题内容
+  Future<SpecialNews> getSpecialNews(String specialId)async{
+    try {
+      //404
+      var response =
+      await newsClient.get("/nc/special/$specialId.html");
+      SpecialNews newsInfo = SpecialNews.fromJson(specialId, response.data);
+      return newsInfo;
+    } on DioError catch (e) {
+      printError(e);
+    }
   }
   //获取新闻详情
   Future<NewsDetail> getNewsDetail(String id) async {
