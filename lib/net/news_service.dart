@@ -7,6 +7,7 @@ import 'package:show_time_for_flutter/modul/photos.dart';
 import 'dart:convert';
 import 'package:show_time_for_flutter/modul/news_detail.dart';
 import 'package:show_time_for_flutter/modul/special_info.dart';
+import 'package:show_time_for_flutter/modul/photos_detail.dart';
 
 class NewsServiceApi {
   final String HEAD_LINE_NEWS = "T1348647909107";
@@ -60,6 +61,18 @@ class NewsServiceApi {
       await newsClient.get("/nc/special/$specialId.html");
       SpecialNews newsInfo = SpecialNews.fromJson(specialId, response.data);
       return newsInfo;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
+  //获取图集内容
+  Future<PhotoSetInfo> getPhotosNews(String photosId)async{
+    try {
+      //404
+      var response =
+      await newsClient.get("/photo/api/set/$photosId.json");
+      PhotoSetInfo photoSetInfo = PhotoSetInfo.fromJson( response.data);
+      return photoSetInfo;
     } on DioError catch (e) {
       printError(e);
     }

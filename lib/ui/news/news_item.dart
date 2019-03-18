@@ -5,6 +5,7 @@ import 'package:show_time_for_flutter/widgets/label_view.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/ui/news/normal/news_detail.dart';
 import 'package:show_time_for_flutter/ui/news/special/special_detail.dart';
+import 'package:show_time_for_flutter/ui/news/photos/photo_sets.dart';
 
 String NEWS_ITEM_SPECIAL = "special";
 String NEWS_ITEM_PHOTO_SET = "photoset";
@@ -80,7 +81,17 @@ class NewsItemWidgetState extends State<NewsItemWidget> {
     }));
   }
 
-  _handlePhotosNews() {}
+  _handlePhotosNews() {
+    var photosetID = widget.newsType.photosetID;
+    if (photosetID == null) {
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return PhotoSetsPage(
+        photosetID: photosetID,
+      );
+    }));
+  }
 
   Widget _builderPhotosItem() {
     return Container(

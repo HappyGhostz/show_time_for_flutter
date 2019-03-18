@@ -5,6 +5,7 @@ import 'package:show_time_for_flutter/modul/news_info.dart';
 const MAX_COUNT = 0x7fffffff;
 
 typedef TextInfo = String Function(int index);
+typedef GestureTapCallback = void Function();
 class BannerView<T> extends StatefulWidget {
   BannerView({
     Key key,
@@ -23,12 +24,18 @@ class BannerView<T> extends StatefulWidget {
     this.pointRadius = 3.0,
     this.selectedColor = Colors.red,
     this.unSelectedColor = Colors.white,
+    this.isShowCycleWidget =true,
+    this.isShowTextInfoWidget =true,
+    this.onTap,
   }) : super(key: key);
 
   final List<Widget> banners;
+  final GestureTapCallback onTap;
 
   //whether cycyle rolling
   final bool cycleRolling;
+  final bool isShowCycleWidget;
+  final bool isShowTextInfoWidget;
 
   //whether auto rolling
   final bool autoRolling;
@@ -129,6 +136,7 @@ class BannerViewState extends State<BannerView>
     }
 
     if (!widget.autoRolling) {
+      this._cancel(manual: false);
       return;
     }
 
@@ -224,20 +232,21 @@ class BannerViewState extends State<BannerView>
                     opacity: opacityAnimation.value,
                     child: widget.hasTextinfo? Container(
                       width: MediaQuery.of(context).size.width,
-                      height: animation.value,
+                      height: widget.isShowTextInfoWidget?animation.value:0,
                       padding: EdgeInsets.all(8.0),
                       color: widget.textBackgroundColor,
                       child: _bannerTextInfoWidget(),
                     ):Container(),
                   ),
           ),
+          widget.isShowCycleWidget?
           Align(
             alignment: Alignment.bottomRight,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: _builderCriInd(),
             ),
-          ),
+          ):Container(),
         ],
       ),
     );
@@ -252,10 +261,10 @@ class BannerViewState extends State<BannerView>
         controller: _pageController,
         onPageChanged: onPageChanged,
         itemBuilder: (BuildContext context, int index) {
-          Widget widget = _banners[index];
+          Widget widgetBanner = _banners[index];
           return GestureDetector(
-            child: widget,
-            onTap: () {},
+            child: widgetBanner,
+            onTap:widget.onTap,
             onTapDown: (details) {
               this._cancel(manual: true);
             },
@@ -340,7 +349,7 @@ class BannerViewState extends State<BannerView>
 
   Widget _bannerTextInfoWidget() {
     return Opacity(opacity: opacityAnimation.value,
-    child: Text(widget.itemTextInfo(_currentIndex)==null?"":widget.itemTextInfo(_currentIndex),
+    child: Text(widget.itemTextInfo==null?"":widget.itemTextInfo(_currentIndex)==null?"":widget.itemTextInfo(_currentIndex),
       style: TextStyle(color: Colors.white),));
   }
 
