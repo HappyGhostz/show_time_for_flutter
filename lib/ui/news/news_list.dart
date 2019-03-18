@@ -5,8 +5,9 @@ import 'package:show_time_for_flutter/modul/news_info.dart';
 import 'package:show_time_for_flutter/widgets/banner.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/ui/news/news_item.dart';
-import 'dart:math';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
+import 'package:show_time_for_flutter/ui/news/photos/photos_banner.dart';
+import 'package:show_time_for_flutter/modul/photos.dart';
 
 int INIT_PAGE = 20;
 
@@ -24,6 +25,7 @@ class NewsListPageState extends State<NewsListPage>
   NewsServiceApi newsServiceApi = new NewsServiceApi();
   List<NewsType> news = [];
   List<String> photos = [];
+  List<PhotoSet> photosets=[];
 
   int _page = 0;
   bool isPerformingRequest = false;
@@ -141,19 +143,21 @@ class NewsListPageState extends State<NewsListPage>
     List<Widget> widget = [];
     for (int i = 0; i < ads.length; i++) {
       if (ads.length == photos.length) {
-        widget.add(FadeInImage.assetNetwork(
-          placeholder: getAssetsImage(),
-          image: photos[i],
-          width: MediaQuery.of(context).size.width,
-          height: 75.0,
-          fit: BoxFit.fill,
-        )
-//            Image.network(
-//          photos[i],
-//          width: MediaQuery.of(context).size.width,
-//          fit: BoxFit.fill,
-//        )
-            );
+        PhotoSet photoset = photosets[i];
+        widget.add(GestureDetector(
+          child: FadeInImage.assetNetwork(
+            placeholder: getAssetsImage(),
+            image: photos[i],
+            width: MediaQuery.of(context).size.width,
+            height: 75.0,
+            fit: BoxFit.fill,
+          ),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+              return PhotosBannerPage(photoset: photoset,);
+            }));
+          },
+        ));
       } else {
         widget.add(Container());
       }
@@ -168,8 +172,9 @@ class NewsListPageState extends State<NewsListPage>
         var ad = news[0].ads[i];
         String skipID = ad.skipID;
         skipID = skipID.replaceAll('|', '/');
-        var photoSet = await newsServiceApi.getPhotos(skipID);
+        PhotoSet photoSet = await newsServiceApi.getPhotos(skipID);
         var list = photoSet.list;
+        photosets.add(photoSet);
         photos.add(list[0].img);
       }
       setState(() {});
