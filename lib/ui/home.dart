@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:show_time_for_flutter/ui/channel/channel.dart';
 import 'package:show_time_for_flutter/ui/channel/channel_info.dart';
 import 'package:show_time_for_flutter/ui/news/news_list.dart';
+import 'package:show_time_for_flutter/ui/music/local_music.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -141,7 +142,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }).toList();
     } else if (_selectedIndex == 2) {
       widgets = musicTabs.map((title) {
-        return new Text(title);
+        if(title=="本地音乐"){
+          return new LocalMusicPage();
+        }else if(title=="推荐歌单"){
+          return new Text(title);
+        }else if(title=="排行榜"){
+          return new Text(title);
+        }
       }).toList();
     } else if (_selectedIndex == 3) {
       widgets = bookTabs.map((title) {
