@@ -3,7 +3,7 @@ class Api {
   static final String NEWS_PHOTOS = "http://news.163.com/photoview";
   static final String BASE_BOOKE_URL = "http://api.zhuishushenqi.com/";
   static final String BASE_MUSIC_URL =
-      "http://tingapi.ting.baidu.com/v1/restserver/";
+      "http://tingapi.ting.baidu.com/v1/restserver";
   static final String BASE_CROSS_URL = "http://iu.snssdk.com/neihan/stream/";
   static final String WELF_CROSS_URL = "http://gank.io/";
   static final String BEAUTY_PICYURE_URL = "http://image.baidu.com/data/";

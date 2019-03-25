@@ -23,4 +23,18 @@ class NetUtils {
     Dio newsClient = new Dio(options);
     return newsClient;
   }
+  Dio getMusicBaseClient() {
+    Map<String, dynamic> heeaders = new Map();
+    heeaders["user-agent"] =
+        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:0.9.4)";
+    BaseOptions options = new BaseOptions(
+      baseUrl: Api.BASE_MUSIC_URL,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+      headers: heeaders,
+      method: "GET",
+    );
+    Dio newsClient = new Dio(options);
+    return newsClient;
+  }
 }

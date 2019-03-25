@@ -8,6 +8,7 @@ import 'package:show_time_for_flutter/ui/news/news_item.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/ui/news/photos/photos_banner.dart';
 import 'package:show_time_for_flutter/modul/photos.dart';
+import 'package:show_time_for_flutter/widgets/load_more.dart';
 
 int INIT_PAGE = 20;
 
@@ -81,6 +82,11 @@ class NewsListPageState extends State<NewsListPage>
     }
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     if (news.length == 0) {
@@ -190,21 +196,7 @@ class NewsListPageState extends State<NewsListPage>
   Widget _buildLoadMore() {
     return Opacity(
       opacity: isPerformingRequest ? 1.0 : 0.0,
-      child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.all(8.0),
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              "assets/images/load_more.gif",
-              width: 120,
-              height: 60,
-              fit: BoxFit.contain,
-            )
-          ],
-        ),
-      ),
+      child: LoadMorePage(),
     );
   }
 

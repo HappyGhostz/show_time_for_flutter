@@ -8,7 +8,7 @@ class LocalMusicPage extends StatefulWidget {
   State<StatefulWidget> createState() => LocalMusicPageState();
 }
 
-class LocalMusicPageState extends State<LocalMusicPage> {
+class LocalMusicPageState extends State<LocalMusicPage> with AutomaticKeepAliveClientMixin{
   ScrollController _scrollController = new ScrollController();
   MusicService musicService = new MusicService();
   List<Song> localSons = [];
@@ -141,12 +141,12 @@ class LocalMusicPageState extends State<LocalMusicPage> {
                       Expanded(
                         child: Text(
                           localSon.singer,
-                          style: TextStyle(fontSize: 12.0, color: Colors.black),
+                          style: TextStyle(fontSize: 12.0, color: Colors.black54),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 8.0),
+                        margin: EdgeInsets.only(left: 8.0,right: 2.0),
                         child: Text(
                           '|',
                           style: TextStyle(fontSize: 12.0, color: Colors.grey),
@@ -155,7 +155,7 @@ class LocalMusicPageState extends State<LocalMusicPage> {
                       Expanded(
                           child: Text(
                         localSon.album == null ? "" : localSon.album,
-                        style: TextStyle(fontSize: 12.0, color: Colors.black),
+                        style: TextStyle(fontSize: 12.0, color: Colors.black54),
                         overflow: TextOverflow.ellipsis,
                       )),
                     ],
@@ -180,4 +180,7 @@ class LocalMusicPageState extends State<LocalMusicPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
