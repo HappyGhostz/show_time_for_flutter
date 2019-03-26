@@ -46,7 +46,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectDrawItemIndex = -1;
   TextStyle style = TextStyle(color: Colors.black);
   TabController _tabController;
-  ScrollController _scrollViewController;
   int _currentTabIndex=0;
 
   @override
@@ -58,7 +57,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _tabController.addListener((){
       _currentTabIndex = _tabController.index;
     });
-    _scrollViewController = ScrollController(initialScrollOffset: 0.0);
   }
 
   changeTabController() {
@@ -69,7 +67,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _tabController.addListener((){
       _currentTabIndex = _tabController.index;
     });
-    _scrollViewController = ScrollController(initialScrollOffset: 0.0);
   }
 
   initSelectChannels() async {
@@ -82,7 +79,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollViewController.dispose();
     super.dispose();
   }
 
@@ -176,28 +172,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         children: buildTabViewPage(),
         controller: _tabController,
       ),
-//      NestedScrollView(
-//          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
-//            return <Widget>[
-//              SliverAppBar(
-//                title: Text(_selectedTitles.elementAt(_selectedIndex)),
-//                actions: _buildActions(),
-//                pinned: true,
-//                floating: true,
-//                forceElevated: boxIsScrolled,
-//                bottom: TabBar(
-//                  isScrollable: _isScrollable(),
-//                  controller: _tabController,
-//                  tabs: buildTabs(),
-//                ),
-//              )
-//            ];
-//          },
-//          controller: _scrollViewController,
-//          body: TabBarView(
-//            children: buildTabViewPage(),
-//            controller: _tabController,
-//          )),
       drawer: Drawer(
         child: _onDrawViewPage(),
       ),
@@ -250,6 +224,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _onItemTapped(int index) {
+    _tabController.animateTo(0);
     setState(() {
       _selectedIndex = index;
       changeTabController();

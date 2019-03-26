@@ -4,6 +4,7 @@ import 'package:show_time_for_flutter/modul/music/recommend_music.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/widgets/load_more.dart';
+import 'package:show_time_for_flutter/ui/music/list_detail.dart';
 
 /**
  * @author zcp
@@ -117,7 +118,7 @@ class RecommendSonsPageState extends State<RecommendSonsPage>with AutomaticKeepA
     return Opacity(
       opacity: isPerformingRequest ? 1.0 : 0.0,
       child: LoadMorePage(),
-    );;
+    );
   }
 
   Widget _builderMusicItem(int index) {
@@ -130,69 +131,79 @@ class RecommendSonsPageState extends State<RecommendSonsPage>with AutomaticKeepA
     } else {
       countNum = songListInfo?.listenum;
     }
-    return Container(
-    padding:EdgeInsets.all(4.0),
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 6,
-              child: Container(
-            height: 160,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  child: ImageUtils.showFadeImageForHeight(
-                      songListInfo.pic_300, 160, BoxFit.cover),
-                  constraints: BoxConstraints.expand(),
-                )
-                ,
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: double.infinity,
-                  ),
-                  color: Colors.black54,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+    return GestureDetector(
+      onTap: (){
+        _recommendDetails(songListInfo);
+      },
+      child: Container(
+        padding:EdgeInsets.all(4.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                flex: 6,
+                child: Container(
+                  height: 160,
+                  child: Stack(
                     children: <Widget>[
-                      Image.asset("assets/images/index_icn_earphone.png",
-                        width: 12.0,),
                       Container(
-                        margin: EdgeInsets.only(left: 4.0,right: 2.0,top:2.0,bottom: 2.0),
-                        child: Text(
-                          countNum,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.white,
-                          ),
+                        child: ImageUtils.showFadeImageForHeight(
+                            songListInfo.pic_300, 160, BoxFit.cover),
+                        constraints: BoxConstraints.expand(),
+                      )
+                      ,
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                        ),
+                        color: Colors.black54,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Image.asset("assets/images/index_icn_earphone.png",
+                              width: 12.0,),
+                            Container(
+                              margin: EdgeInsets.only(left: 4.0,right: 2.0,top:2.0,bottom: 2.0),
+                              child: Text(
+                                countNum,
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       )
                     ],
                   ),
-                )
-              ],
-            ),
-          ))
-          ,
-          Expanded(
-            flex: 1,
-              child: Container(
-            child:Row(
-              children: <Widget>[
-                Expanded(child: Text(songListInfo.title,
-                  softWrap: true,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 12.0,
-                  ),))
-              ],
-            )
+                ))
             ,
-          ))
-        ],
+            Expanded(
+                flex: 1,
+                child: Container(
+                  child:Row(
+                    children: <Widget>[
+                      Expanded(child: Text(songListInfo.title,
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12.0,
+                        ),))
+                    ],
+                  )
+                  ,
+                ))
+          ],
+        ),
       ),
     );
+  }
+  _recommendDetails(SongListInfo songListInfo){
+    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+      return MusicListDetailPage(isPlayList: true,songInfo: songListInfo,);
+    }));
   }
 
   @override

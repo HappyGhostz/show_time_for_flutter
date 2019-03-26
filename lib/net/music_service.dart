@@ -7,6 +7,9 @@ import 'package:show_time_for_flutter/net/net_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:show_time_for_flutter/modul/music/recommend_music.dart';
 import 'package:show_time_for_flutter/modul/music/rank_data.dart';
+import 'package:show_time_for_flutter/modul/music/song_list.dart';
+
+
 String MUSIC_URL_FROM = "webapp_music";
 String MUSIC_URL_FORMAT = "json";
 String MUSIC_URL_METHOD_GEDAN = "baidu.ting.diy.gedan";
@@ -77,6 +80,21 @@ class MusicService{
       await musicClient.get("/ting?format=$format&from=$from&method=$method&kflag=$kflag");
       var rankMusicData = RankingListItem.fromJson(response.data);
       return rankMusicData;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
+  //获取某个歌单的信息
+  Future<SongListDetail> getListMusics(String listid)async{
+    String format= MUSIC_URL_FORMAT;
+    String from = MUSIC_URL_FROM;
+    String method =MUSIC_URL_METHOD_SONGLIST_DETAIL;
+    try {
+      //404
+      var response =
+      await musicClient.get("/ting?format=$format&from=$from&method=$method&listid=$listid");
+      var songMusicsData = SongListDetail.fromJson(response.data);
+      return songMusicsData;
     } on DioError catch (e) {
       printError(e);
     }
