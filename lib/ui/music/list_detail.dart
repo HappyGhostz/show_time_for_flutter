@@ -4,6 +4,7 @@ import 'package:show_time_for_flutter/modul/music/recommend_music.dart';
 import 'package:show_time_for_flutter/modul/music/song_list.dart';
 import 'package:show_time_for_flutter/widgets/music_list_head.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
+import 'package:show_time_for_flutter/utils/image_utils.dart';
 
 /**
  * @author zcp
@@ -11,10 +12,12 @@ import 'package:show_time_for_flutter/widgets/error_loading.dart';
  * @Description
  */
 class MusicListDetailPage extends StatefulWidget {
-  MusicListDetailPage({Key key, this.songInfo, this.isPlayList})
+  MusicListDetailPage({Key key, this.songInfo, this.isPlayList,this.typeId,this.title})
       : super(key: key);
   bool isPlayList;
   SongListInfo songInfo;
+  int typeId;
+  String title;
 
   @override
   State<StatefulWidget> createState() => MusicListDetailPageState();
@@ -32,13 +35,18 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
   }
 
   Future<void> loadData() async {
-    if (widget.songInfo != null) {
+    if (widget.isPlayList) {
       songListDetail =
           await _musicService.getListMusics(widget.songInfo.listid);
       songDetails = songListDetail.songDetails;
-      setState(() {
-      });
+
+    }else{
+      songListDetail =
+      await _musicService.getListMusics(widget.typeId.toString());
+      songDetails = songListDetail.songDetails;
     }
+    setState(() {
+    });
   }
 
   @override
@@ -57,7 +65,7 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
           : CustomScrollView(
               slivers: <Widget>[
                 SliverAppBar(
-                  title: Text("歌单"),
+                  title: Text(widget.isPlayList?"歌单":widget.title),
                   pinned: true,
                   //是否固定导航栏，
                   snap: false,
@@ -71,12 +79,12 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
                   expandedHeight: 270.0,
                   //是初始化展开的高度。
                   flexibleSpace: FlexibleSpaceBar(
-                    background: MusicListHeadPage(
+                    background: widget.isPlayList?MusicListHeadPage(
                       imageSrc: songListDetail.pic_300,
                       countNum: songListDetail.listenum,
                       title: songListDetail.title,
                       tag: "标签：${songListDetail.tag.replaceAll(",", " ")}",
-                    ),
+                    ):ImageUtils.showFadeImage(songListDetail.pic_300, BoxFit.cover),
                     //背景，一般是一个图片，在title后面，[Image.fit] set to [BoxFit.cover].
                     centerTitle: false,
                     collapseMode: CollapseMode
