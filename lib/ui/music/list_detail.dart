@@ -5,6 +5,9 @@ import 'package:show_time_for_flutter/modul/music/song_list.dart';
 import 'package:show_time_for_flutter/widgets/music_list_head.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
+import 'package:show_time_for_flutter/modul/music/net_song.dart';
+import 'package:show_time_for_flutter/modul/local_song.dart';
+import 'package:show_time_for_flutter/ui/music/music_play.dart';
 
 /**
  * @author zcp
@@ -27,6 +30,7 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
   MusicService _musicService = new MusicService();
   SongListDetail songListDetail;
   List<SongDetail> songDetails = [];
+  List<Song> songs;
 
   @override
   void initState() {
@@ -35,15 +39,17 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
   }
 
   Future<void> loadData() async {
-    if (widget.isPlayList) {
-      songListDetail =
-          await _musicService.getListMusics(widget.songInfo.listid);
-      songDetails = songListDetail.songDetails;
-
-    }else{
-      songListDetail =
-      await _musicService.getListMusics(widget.typeId.toString());
-      songDetails = songListDetail.songDetails;
+    songListDetail =
+    await _musicService.getListMusics(widget.songInfo.listid);
+    songDetails = songListDetail.songDetails;
+    songs =[];
+    for(int i=0;i<songDetails.length;i++){
+      var songDetail = songDetails[i];
+      SongDetailInfo songDetailInfo = await _musicService.getSong(songDetail.song_id);
+      var songinfo = songDetailInfo.songinfo;
+      Song song = Song(i, songinfo.author, songinfo.title, songinfo.album_title,
+          0, 0, songDetailInfo.bitrate.file_link, 0, songinfo.pic_premium);
+      songs.add(song);
     }
     setState(() {
     });
@@ -119,6 +125,21 @@ class MusicListDetailPageState extends State<MusicListDetailPage> {
   Widget _buildSonglistItem(int index){
     var songDetail = songDetails[index];
     return GestureDetector(
+      onTap: (){
+        if(songs==null||songs.length<songDetails.length){
+          Scaffold.of(context).showSnackBar(
+              new SnackBar(
+                content: new Text("资源尚未加载完成，请稍后再试!"),
+              ));
+          return;
+        }else if(songs!=null&&songs.length==songDetails.length){
+          var song = songs[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+            return MusicPlayPage(songs:songs,countIndex:index,mp3Url:song.url,albumSrc: song.albumArt,title: song.title,
+              isLocal: false,);
+          }));
+        }
+      },
       child: Container(
         height: 55,
         child: Row(

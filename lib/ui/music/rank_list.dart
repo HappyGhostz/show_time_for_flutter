@@ -3,6 +3,9 @@ import 'package:show_time_for_flutter/net/music_service.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/modul/music/rank_list_data.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
+import 'package:show_time_for_flutter/modul/local_song.dart';
+import 'package:show_time_for_flutter/modul/music/net_song.dart';
+import 'package:show_time_for_flutter/ui/music/music_play.dart';
 /**
  * @author zcp
  * @date 2019/3/27
@@ -22,6 +25,7 @@ class RankMusicListPageState extends State<RankMusicListPage> {
   MusicService _musicService = new MusicService();
   RankingListDetail rankListDetail;
   List<SongListBean> song_list=[];
+  List<Song> songs;
   @override
   void initState() {
     super.initState();
@@ -32,6 +36,15 @@ class RankMusicListPageState extends State<RankMusicListPage> {
     rankListDetail =
     await _musicService.getRankListMusics(widget.typeId);
     song_list = rankListDetail.song_list;
+    songs =[];
+    for(int i=0;i<song_list.length;i++){
+      var songDetail = song_list[i];
+      SongDetailInfo songDetailInfo = await _musicService.getSong(songDetail.song_id);
+      var songinfo = songDetailInfo.songinfo;
+      Song song = Song(i, songinfo.author, songinfo.title, songinfo.album_title,
+          0, 0, songDetailInfo.bitrate.file_link, 0, songinfo.pic_premium);
+      songs.add(song);
+    }
     setState(() {
     });
   }
@@ -101,6 +114,21 @@ class RankMusicListPageState extends State<RankMusicListPage> {
   Widget _buildSonglistItem(int index){
     var songDetail = song_list[index];
     return GestureDetector(
+      onTap: (){
+        if(songs==null||songs.length<song_list.length){
+          Scaffold.of(context).showSnackBar(
+              new SnackBar(
+                content: new Text("资源尚未加载完成，请稍后再试!"),
+              ));
+          return;
+        }else if(songs!=null&&songs.length==song_list.length){
+          var song = songs[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+            return MusicPlayPage(songs:songs,countIndex:index,mp3Url:song.url,albumSrc: song.albumArt,title: song.title,
+              isLocal: false,);
+          }));
+        }
+      },
       child: Container(
         height: 55,
         child: Row(

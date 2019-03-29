@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/net/music_service.dart';
 import 'package:show_time_for_flutter/modul/local_song.dart';
+import 'package:show_time_for_flutter/ui/music/music_play.dart';
 
 class LocalMusicPage extends StatefulWidget {
   @override
@@ -102,6 +103,9 @@ class LocalMusicPageState extends State<LocalMusicPage> with AutomaticKeepAliveC
   Widget _buildListItem(int index) {
     var localSon = localSons[index-1];
     return GestureDetector(
+      onTap: (){
+        _playMusic(index-1);
+      },
       child: Container(
         height: 55,
         child: Row(
@@ -125,7 +129,7 @@ class LocalMusicPageState extends State<LocalMusicPage> with AutomaticKeepAliveC
                 children: <Widget>[
                   Container(
                     child: Text(
-                      localSon.title,
+                      localSon.title.replaceAll(".mp3", ""),
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.black,
@@ -180,7 +184,13 @@ class LocalMusicPageState extends State<LocalMusicPage> with AutomaticKeepAliveC
       ),
     );
   }
-
+  _playMusic(int index){
+    var localSon = localSons[index];
+    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+      return MusicPlayPage(songs:localSons,countIndex:index,mp3Url:localSon.url,albumSrc: localSon.albumArt,title: localSon.title,
+      isLocal: true,);
+    }));
+  }
   @override
   bool get wantKeepAlive => true;
 }

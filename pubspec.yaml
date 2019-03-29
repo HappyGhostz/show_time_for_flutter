@@ -32,6 +32,7 @@ dependencies:
   xml: ^3.3.0
   gbk2utf8: ^1.0.1
   flutter_html: ^0.9.6
+  audioplayer: ^0.5.2
 
 
 dev_dependencies:
