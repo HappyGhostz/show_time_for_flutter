@@ -34,7 +34,17 @@ class NetUtils {
       headers: heeaders,
       method: "GET",
     );
-    Dio newsClient = new Dio(options);
-    return newsClient;
+    Dio musicClient = new Dio(options);
+    return musicClient;
+  }
+  Dio getBookBaseClient() {
+    BaseOptions options = new BaseOptions(
+      baseUrl: Api.BASE_BOOKE_URL,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+      method: "GET",
+    );
+    Dio boolClient = new Dio(options);
+    return boolClient;
   }
 }

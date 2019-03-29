@@ -1,7 +1,7 @@
 class Api {
   static final String NEWS_HOST = "http://c.3g.163.com";
   static final String NEWS_PHOTOS = "http://news.163.com/photoview";
-  static final String BASE_BOOKE_URL = "http://api.zhuishushenqi.com/";
+  static final String BASE_BOOKE_URL = "http://api.zhuishushenqi.com";
   static final String BASE_MUSIC_URL =
       "http://tingapi.ting.baidu.com/v1/restserver";
   static final String BASE_CROSS_URL = "http://iu.snssdk.com/neihan/stream/";

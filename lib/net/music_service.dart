@@ -9,6 +9,7 @@ import 'package:show_time_for_flutter/modul/music/rank_data.dart';
 import 'package:show_time_for_flutter/modul/music/song_list.dart';
 import 'package:show_time_for_flutter/modul/music/rank_list_data.dart';
 import 'package:show_time_for_flutter/modul/music/net_song.dart';
+import 'package:show_time_for_flutter/modul/music/search_music.dart';
 
 
 String MUSIC_URL_FROM = "webapp_music";
@@ -143,6 +144,23 @@ class MusicService {
           "/ting?from=$from&version=$version&format=$format&method=$method&songid=$songid");
       var songData = SongDetailInfo.fromJson(response.data);
       return songData;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
+  //获取搜索结果
+  Future<MusicSearchList> getSearchSons(String query) async {
+    int page_no = 1;
+    String format = MUSIC_URL_FORMAT;
+    int page_size = 50;
+    String method = MUSIC_URL_METHOD_SONG_SEARCH;
+    try {
+      //404
+      var response =
+      await musicClient.get(
+          "/ting?method=$method&query=$query&page_size=$page_size&page_no=$page_no&format=$format");
+      var songSarchData = MusicSearchList.fromJson(response.data);
+      return songSarchData;
     } on DioError catch (e) {
       printError(e);
     }
