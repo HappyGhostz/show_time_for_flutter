@@ -5,6 +5,11 @@ import 'package:show_time_for_flutter/ui/news/news_list.dart';
 import 'package:show_time_for_flutter/ui/music/local_music.dart';
 import 'package:show_time_for_flutter/ui/music/recommend_sons.dart';
 import 'package:show_time_for_flutter/ui/music/rank.dart';
+import 'package:show_time_for_flutter/ui/music/search_music.dart';
+import 'package:show_time_for_flutter/ui/book/rack/rack_page.dart';
+import 'package:show_time_for_flutter/ui/book/category/book_category.dart';
+import 'package:show_time_for_flutter/ui/book/community/community_book.dart';
+import 'package:show_time_for_flutter/ui/book/rank/rank_page.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -150,7 +155,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }).toList();
     } else if (_selectedIndex == 3) {
       widgets = bookTabs.map((title) {
-        return new Text(title);
+        if(title=="书架"){
+          return BookRackPage();
+        }else if(title=="分类"){
+          return BookCategoryPage();
+        }else if(title=="社区"){
+          return BookCommunityPage();
+        }else if(title=="排行榜"){
+          return BookRankPage();
+        }
       }).toList();
     }
     return widgets;
@@ -258,15 +271,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-//              Navigator.of(context)
-//                  .push(MaterialPageRoute(builder: (context) {
-//                return ChannelPage();
-//              })).then((value) {
-//                tabs = value;
-//                setState(() {
-//                  changeTabController();
-//                });
-//              });
+              showSearch(context: context, delegate: MusicSearchBarDelegate());
             })
       ];
     } else if (_selectedIndex == 3) {
