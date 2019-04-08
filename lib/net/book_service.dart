@@ -5,6 +5,8 @@ import 'package:show_time_for_flutter/modul/book/book_recommend.dart';
 import 'package:show_time_for_flutter/modul/book/book_category.dart';
 import 'package:show_time_for_flutter/modul/book/book_community.dart';
 import 'package:show_time_for_flutter/modul/book/rank/rank_book.dart';
+import 'package:show_time_for_flutter/modul/book/read/chapters.dart';
+import 'package:show_time_for_flutter/modul/book/read/chapter_body.dart';
 /**
  * @author zcp
  * @date 2019/3/29
@@ -90,7 +92,35 @@ class BookService{
       printError(e);
     }
   }
+  Future<ChapterBook> getBook(String bookId) async {
+    Map<String, dynamic> querys =Map();
+    querys["view"]="chapters";
 
+    try {
+      //404
+      var response =
+      await bookClient.get("/mix-atoc/$bookId",queryParameters:querys );
+      var data = response.data;
+      ChapterBook chapterBook = ChapterBook.fromJson(data);
+      return chapterBook;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
+  Future<ChapterBody> getChapterBody(String chapterLink)async{
+    try {
+      Dio boolClient = new Dio();
+      var url = "http://chapter2.zhuishushenqi.com/chapter/"+encode(chapterLink);
+      //404
+      var response =
+          await boolClient.get(url);
+      var data = response.data;
+      ChapterBody chapterBody = ChapterBody.fromJson(data);
+      return chapterBody;
+    } on DioError catch (e) {
+      printError(e);
+    }
+  }
   printError(DioError e) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx and is also not 304.
@@ -101,6 +131,15 @@ class BookService{
     } else {
       // Something happened in setting up or sending the request that triggered an Error
       print(e.request);
+      print(e.message);
+    }
+  }
+  String encode(String encode) {
+    if (encode == null) return "";
+
+    try {
+      return Uri.encodeQueryComponent(encode);
+    } catch (e) {
       print(e.message);
     }
   }

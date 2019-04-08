@@ -4,7 +4,8 @@ import 'package:show_time_for_flutter/net/book_service.dart';
 import 'package:show_time_for_flutter/modul/book/book_recommend.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/utils/string_format.dart';
-
+import 'package:show_time_for_flutter/ui/book/read/read_page.dart';
+import 'package:flutter/services.dart';
 /**
  * @author zcp
  * @date 2019/3/29
@@ -70,46 +71,54 @@ class BookRackPageState extends State<BookRackPage> with AutomaticKeepAliveClien
       lastUpdata =
           StringUtils.getDescriptionTimeFromDateString(book.updated) + ":";
     }
-    return Container(
-      child: Row(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
-            child: ImageUtils.showFadeImageForSize(
-                IMG_BASE_URL + book.cover, 60.0, 45.0, BoxFit.cover),
-          ),
-          Expanded(
-              child: Container(
-            margin: EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: Text(
-                    book.title,
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 33, 33, 33), fontSize: 16.0),
-                  ),
-                ),
-                Container(
-                  child: Text(
-                    lastUpdata + book.lastChapter,
-                    style: TextStyle(
-                        color: Color.fromARGB(
-                          255,
-                          114,
-                          114,
-                          114,
-                        ),
-                        fontSize: 12.0),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-              ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+          return ReadPage(book: book);
+        }));
+      },
+      child: Container(
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 10.0),
+              child: ImageUtils.showFadeImageForSize(
+                  IMG_BASE_URL + book.cover, 60.0, 45.0, BoxFit.cover),
             ),
-          ))
-        ],
+            Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          book.title,
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 33, 33, 33), fontSize: 16.0),
+                        ),
+                      ),
+                      Container(
+                        child: Text(
+                          lastUpdata + book.lastChapter,
+                          style: TextStyle(
+                              color: Color.fromARGB(
+                                255,
+                                114,
+                                114,
+                                114,
+                              ),
+                              fontSize: 12.0),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
+                    ],
+                  ),
+                ))
+          ],
+        ),
       ),
     );
   }
