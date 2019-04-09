@@ -1,6 +1,7 @@
 import 'package:show_time_for_flutter/net/net_utils.dart';
 import 'package:dio/dio.dart';
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:show_time_for_flutter/modul/book/book_recommend.dart';
 import 'package:show_time_for_flutter/modul/book/book_category.dart';
 import 'package:show_time_for_flutter/modul/book/book_community.dart';
@@ -121,6 +122,7 @@ class BookService{
       printError(e);
     }
   }
+
   printError(DioError e) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx and is also not 304.

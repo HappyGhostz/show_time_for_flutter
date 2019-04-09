@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 /**
  * @author zcp
  * @date 2019/4/3
@@ -17,6 +18,8 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
     @required this.currentChapter,
     @required this.maxWidth,
     @required this.maxHeight,
+    @required this.bookId,
+    @required this.currentIndex,
     this.downListener,
     this.nextChaperListener,
     this.previousChapterListener,
@@ -34,7 +37,8 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
   bool isPrevious;
 
   String chapterBody;
-  String body = "hai mei qingqiudao ";
+  String bookId;
+  String body = "加载中...";
   String title;
   List<String> bodys = [];
   List<String> realBodys = [];
@@ -42,7 +46,7 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
   PageController _pageController;
   double downX = 0;
 
-  int currentIndex = 0;
+  int currentIndex = 1;
 
   void initState() {
     if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
@@ -51,6 +55,8 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
           _pageController.jumpToPage(realBodys.length-2);
         }else if(isNext){
           _pageController.jumpToPage(1);
+        }else{
+          _pageController.jumpToPage(currentIndex);
         }
       });
     }
@@ -148,11 +154,13 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
               if (index == realBodys.length - 1) {
                 nextChaperListener();
               } else if (index == 0) {
-                if (currentChapter - 1 == 0) {
+                if (currentChapter  == 0) {
                   return;
                 }
                 previousChapterListener();
               }
+              save(currentIndex);
+
             },itemCount: realBodys.length,
             controller: _pageController,),
             onPointerDown: (PointerDownEvent event) {
@@ -161,12 +169,18 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
             onPointerUp: (PointerUpEvent event) {
               var dx = event.position.dx;
               var distance = dx - downX;
-              if (currentChapter - 1 == 0 && distance >= 100) {
+              if (currentChapter == 0 && distance >= 100&&currentIndex==0) {
                 Scaffold.of(context)
                     .showSnackBar(SnackBar(content: Text("没有上一页了！")));
               }
             },
           );
   }
+  save(int currentIndex) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("$bookId-chapter", currentChapter);
+    prefs.setInt("$bookId-index", currentIndex);
+  }
+
 }
 

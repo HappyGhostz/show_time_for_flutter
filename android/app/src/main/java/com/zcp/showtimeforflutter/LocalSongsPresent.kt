@@ -64,7 +64,6 @@ class LocalSongsPresent(context: Context) {
             album_art = cur.getString(0)
         }
         cur.close()
-        cur = null
         return album_art
     }
 }
