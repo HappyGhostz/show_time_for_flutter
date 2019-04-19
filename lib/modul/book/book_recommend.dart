@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
+import 'package:show_time_for_flutter/utils/sql_helper.dart';
 part 'book_recommend.g.dart';
 /**
  * @author zcp
@@ -27,7 +27,7 @@ class BookRecommend {
 class Books {
 
   @JsonKey(name: '_id')
-  String id;
+  String bookId;
 
   @JsonKey(name: 'cover')
   String cover;
@@ -68,10 +68,83 @@ class Books {
   @JsonKey(name: 'lastChapter')
   String lastChapter;
 
-  Books(this.id,this.cover,this.author,this.majorCate,this.title,this.shortIntro,this.contentType,this.allowMonthly,this.hasCp,this.latelyFollower,this.retentionRatio,this.updated,this.chaptersCount,this.lastChapter,);
+  Books(this.bookId,this.cover,this.author,this.majorCate,this.title,this.shortIntro,this.contentType,this.allowMonthly,this.hasCp,this.latelyFollower,this.retentionRatio,this.updated,this.chaptersCount,this.lastChapter,);
 
   factory Books.fromJson(Map<String, dynamic> srcJson) => _$BooksFromJson(srcJson);
+  Map<String, dynamic> toJson() => _$BooksToJson(this);
+}
 
+class BookModel{
+  String tableName='book';
+  SqlHelper sqlHelper;
+  BookModel(){
+    sqlHelper = SqlHelper.setTable(tableName);
+  }
+  Future close() async{
+    sqlHelper.close();
+  }
+
+  Future<List<Books>>  getSaveBooks()async{
+    List<Map<String, dynamic>> list = await sqlHelper.get();
+    List<Books> books = list.map((mapjson){
+      Map<String, dynamic> map = Map<String, dynamic>.from(mapjson);
+      if(map["allowMonthly"]==1){
+        map["allowMonthly"]=true;
+      }else{
+        map["allowMonthly"]=false;
+      }
+      if(map["hasCp"]==1){
+        map["hasCp"]=true;
+      }else{
+        map["hasCp"]=false;
+      }
+      return new Books.fromJson(map);
+    }).toList();
+    return books;
+  }
+  //通过返回的channel id来查看是否插入正确
+  Future<Books> insertSelectChannel(Books book)async{
+    Map<String, dynamic> json = book.toJson();
+    if(json["allowMonthly"]){
+      json["allowMonthly"]=1;
+    }else{
+      json["allowMonthly"]=0;
+    }
+    if(json["hasCp"]){
+      json["hasCp"]=1;
+    }else{
+      json["hasCp"]=0;
+    }
+
+    Map<String, dynamic> bookMap = await sqlHelper.insert(json);
+    if(json["allowMonthly"]==1){
+      json["allowMonthly"]=true;
+    }else{
+      json["allowMonthly"]=false;
+    }
+    if(json["hasCp"]==1){
+      json["hasCp"]=true;
+    }else{
+      json["hasCp"]=false;
+    }
+    return new Books.fromJson(bookMap);
+  }
+
+  Future<int> deleteSelectChannel(Books book)async{
+    int count = await sqlHelper.delete( book.bookId,'bookId');
+    return count;
+  }
+
+  Future insertSomeChannel(List<Books> books)async{
+    books.forEach((book)async{
+      await insertSelectChannel(book);
+    });
+  }
+
+  Future<int> deleteAllBooks()async{
+    int count = await sqlHelper.deleteAllData();
+    return count;
+  }
 }
 
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 /**
  * @author zcp
  * @date 2019/4/3
@@ -11,7 +12,7 @@ typedef PointerDownEventListener = void Function();
 typedef NextChapterListener = void Function();
 typedef PreviousChapterListener = void Function();
 
-class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
+class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver {
   BookPaginationPage({
     Key key,
     @required this.chapterInfo,
@@ -20,6 +21,8 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
     @required this.maxHeight,
     @required this.bookId,
     @required this.currentIndex,
+    @required this.isInit,
+    @required this.textStyle,
     this.downListener,
     this.nextChaperListener,
     this.previousChapterListener,
@@ -30,6 +33,7 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
   int currentChapter;
   double maxWidth = 0;
   double maxHeight = 0;
+  TextStyle textStyle;
   PointerDownEventListener downListener;
   NextChapterListener nextChaperListener;
   PreviousChapterListener previousChapterListener;
@@ -48,15 +52,22 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
 
   int currentIndex = 1;
 
+  bool isInit;
+  SharedPreferences prefs;
+
   void initState() {
-    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        if(isPrevious){
-          _pageController.jumpToPage(realBodys.length-2);
-        }else if(isNext){
+        if (isPrevious) {
+          _pageController.jumpToPage(realBodys.length - 2);
+          isPrevious=false;
+        } else if (isNext) {
           _pageController.jumpToPage(1);
-        }else{
+          isNext=false;
+        } else if (isInit) {
           _pageController.jumpToPage(currentIndex);
+          isInit=false;
         }
       });
     }
@@ -109,15 +120,7 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
       realBodys.addAll(bodys);
       realBodys.add("加载中...");
     }
-
   }
-
-  TextStyle textStyle = new TextStyle(
-    color: Colors.black,
-    fontSize: 16.0,
-    fontWeight: FontWeight.w500,
-    height: 1,
-  );
 
   bool layoutEnouth(String chapterInfo) {
     TextSpan textSpan = new TextSpan(
@@ -136,51 +139,84 @@ class BookPaginationPage extends StatelessWidget with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
+    initPrfs();
     initState();
+    FocusNode focusNode = new FocusNode();
+    FocusScope.of(context).requestFocus(focusNode);
     return realBodys.length == 0
         ? Container()
         : Listener(
-            child: PageView.builder(
-                itemBuilder: (BuildContext context, int index) {
-              return Container(
+            child: RawKeyboardListener(
+                focusNode: focusNode,
+                onKey: (RawKeyEvent event) {
+                  if (event is RawKeyDownEvent &&
+                      event.data is RawKeyEventDataAndroid) {
+                    RawKeyDownEvent rawKeyDownEvent = event;
+                    RawKeyEventDataAndroid rawKeyEventDataAndroid =
+                        rawKeyDownEvent.data;
+                    var volumeFlip =prefs.getBool("book-volumeFlip");
+                    if(volumeFlip!=null&&volumeFlip){
+                      switch (rawKeyEventDataAndroid.keyCode) {
+                        case 25:
+                          _pageController.jumpToPage(currentIndex + 1);
+                          break;
+                        case 24:
+                          _pageController.jumpToPage(currentIndex - 1);
+                          break;
+                      }
+                    }
+                  }
+                },
+                child: PageView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
 //            color: Colors.amber,
-                child: Text(
-                  realBodys[index],
-                  style: textStyle,
-                ),
-              );
-            }, onPageChanged: (index) {
-              currentIndex = index;
-              if (index == realBodys.length - 1) {
-                nextChaperListener();
-              } else if (index == 0) {
-                if (currentChapter  == 0) {
-                  return;
-                }
-                previousChapterListener();
-              }
-              save(currentIndex);
-
-            },itemCount: realBodys.length,
-            controller: _pageController,),
+                      child: Text(
+                        realBodys[index],
+                        style: textStyle,
+                      ),
+                    );
+                  },
+                  onPageChanged: (index) {
+                    currentIndex = index;
+                    if (index == realBodys.length - 1) {
+                      nextChaperListener();
+                    } else if (index == 0) {
+                      if (currentChapter == 0) {
+                        return;
+                      }
+                      previousChapterListener();
+                    }
+                    save(currentIndex);
+                  },
+                  itemCount: realBodys.length,
+                  controller: _pageController,
+                )),
             onPointerDown: (PointerDownEvent event) {
               downX = event.position.dx;
             },
             onPointerUp: (PointerUpEvent event) {
               var dx = event.position.dx;
               var distance = dx - downX;
-              if (currentChapter == 0 && distance >= 100&&currentIndex==0) {
+              if (distance.abs() >= 0 && distance.abs() < 10) {
+                downListener();
+              }
+              if (currentChapter == 0 && distance >= 100 && currentIndex == 0) {
                 Scaffold.of(context)
                     .showSnackBar(SnackBar(content: Text("没有上一页了！")));
               }
             },
           );
   }
-  save(int currentIndex) async{
+
+  save(int currentIndex) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("$bookId-chapter", currentChapter);
     prefs.setInt("$bookId-index", currentIndex);
   }
-
+  initPrfs() async {
+    if(prefs==null){
+      prefs = await SharedPreferences.getInstance();
+    }
+  }
 }
-

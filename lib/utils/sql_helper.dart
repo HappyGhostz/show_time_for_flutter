@@ -17,6 +17,7 @@ class SqlHelper extends BaseModel {
   SqlHelper.setTable(String name)
       : tableName = name,
         super(ProviderForDB.db);
+  Future close() async => db.close();
 
   Future<List<Map<String, dynamic>>> get() async {
     return await this.query(tableName);

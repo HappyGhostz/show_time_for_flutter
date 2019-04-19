@@ -1,20 +1,27 @@
 import 'package:show_time_for_flutter/net/net_utils.dart';
 import 'package:dio/dio.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:show_time_for_flutter/modul/book/book_recommend.dart';
 import 'package:show_time_for_flutter/modul/book/book_category.dart';
 import 'package:show_time_for_flutter/modul/book/book_community.dart';
 import 'package:show_time_for_flutter/modul/book/rank/rank_book.dart';
 import 'package:show_time_for_flutter/modul/book/read/chapters.dart';
 import 'package:show_time_for_flutter/modul/book/read/chapter_body.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:event_bus/event_bus.dart';
+import 'package:show_time_for_flutter/event/book_download_event.dart';
+
 /**
  * @author zcp
  * @date 2019/3/29
  * @Description
  */
 String IMG_BASE_URL = "http://statics.zhuishushenqi.com";
-class BookService{
+
+class BookService {
   NetUtils bookUtils;
   Dio bookClient;
 
@@ -22,30 +29,31 @@ class BookService{
     bookUtils = NetUtils();
     bookClient = bookUtils.getBookBaseClient();
   }
+
   //获取推荐列表
   Future<BookRecommend> getRecomendBooks() async {
     try {
       //404
-      var response =
-      await bookClient.get("/book/recommend?gender=male");
+      var response = await bookClient.get("/book/recommend?gender=male");
       BookRecommend bookRecommend = BookRecommend.fromJson(response.data);
       return bookRecommend;
     } on DioError catch (e) {
       printError(e);
     }
   }
+
   //获取分类列表
   Future<BookCategory> getCategoryList() async {
     try {
       //404
-      var response =
-      await bookClient.get("/cats/lv2/statistics");
+      var response = await bookClient.get("/cats/lv2/statistics");
       BookCategory bookCategory = BookCategory.fromJson(response.data);
       return bookCategory;
     } on DioError catch (e) {
       printError(e);
     }
   }
+
   /**
    * 获取书荒区帖子列表
    * 全部、默认排序  http://api.zhuishushenqi.com/post/help?duration=all&sort=updated&start=0&limit=20&distillate=
@@ -61,22 +69,23 @@ class BookService{
    * @return
    */
   Future<BookCommunity> getBookHelpList(String start) async {
-    Map<String, dynamic> querys =Map();
-    querys["duration"]="all";
-    querys["sort"]="updated";
-    querys["start"]=start;
-    querys["limit"]="30";
-    querys["distillate"]="";
+    Map<String, dynamic> querys = Map();
+    querys["duration"] = "all";
+    querys["sort"] = "updated";
+    querys["start"] = start;
+    querys["limit"] = "30";
+    querys["distillate"] = "";
     try {
       //404
       var response =
-      await bookClient.get("/post/help",queryParameters: querys);
+          await bookClient.get("/post/help", queryParameters: querys);
       BookCommunity bookCommunity = BookCommunity.fromJson(response.data);
       return bookCommunity;
     } on DioError catch (e) {
       printError(e);
     }
   }
+
   /**
    * 获取所有排行榜
    *
@@ -85,22 +94,22 @@ class BookService{
   Future<RankBook> getRanking() async {
     try {
       //404
-      var response =
-      await bookClient.get("/ranking/gender");
+      var response = await bookClient.get("/ranking/gender");
       RankBook bookRank = RankBook.fromJson(response.data);
       return bookRank;
     } on DioError catch (e) {
       printError(e);
     }
   }
+
   Future<ChapterBook> getBook(String bookId) async {
-    Map<String, dynamic> querys =Map();
-    querys["view"]="chapters";
+    Map<String, dynamic> querys = Map();
+    querys["view"] = "chapters";
 
     try {
       //404
       var response =
-      await bookClient.get("/mix-atoc/$bookId",queryParameters:querys );
+          await bookClient.get("/mix-atoc/$bookId", queryParameters: querys);
       var data = response.data;
       ChapterBook chapterBook = ChapterBook.fromJson(data);
       return chapterBook;
@@ -108,18 +117,103 @@ class BookService{
       printError(e);
     }
   }
-  Future<ChapterBody> getChapterBody(String chapterLink)async{
+
+  Future<ChapterBody> getChapterBody(String chapterLink) async {
     try {
       Dio boolClient = new Dio();
-      var url = "http://chapter2.zhuishushenqi.com/chapter/"+encode(chapterLink);
+      var url =
+          "http://chapter2.zhuishushenqi.com/chapter/" + encode(chapterLink);
       //404
-      var response =
-          await boolClient.get(url);
+      var response = await boolClient.get(url);
       var data = response.data;
       ChapterBody chapterBody = ChapterBody.fromJson(data);
       return chapterBody;
     } on DioError catch (e) {
       printError(e);
+    }
+  }
+
+  Future downloadChapter(EventBus eventBus,String bookId, List<Chapters> chapters,
+      int currentChapter, int size) async {
+    Dio boolClient = new Dio();
+
+    for (int i = 0; i < size; i++) {
+      var chapter = chapters[currentChapter + i + 1];
+      Map<int,File> fileMap = await getChapterFile(bookId, currentChapter + i + 1);
+      if (fileMap == null||fileMap.containsKey(1)) {
+        print("continue:${currentChapter + i + 1}");
+        eventBus.fire(new ChapterEvent("${chapter.title}:已缓存"));
+        continue;
+      }
+      var file = fileMap[0];
+      var link = chapter.link;
+      var url = "http://chapter2.zhuishushenqi.com/chapter/" + encode(link);
+      var response = await boolClient.get(url);
+      var data = response.data;
+      ChapterBody chapterBody = ChapterBody.fromJson(data);
+      await file.writeAsStringSync(chapter.title+"|"+chapterBody.chapter.body);
+      eventBus.fire(new ChapterEvent("正在缓存：${chapter.title}"));
+    }
+    eventBus.fire(new ChapterEvent("缓存完成!"));
+  }
+
+  Future<String> loadChapterFile(String bookId, int currentChapter) async {
+    Map<int,File> fileMap = await getChapterFile(bookId, currentChapter);
+    if (fileMap == null||fileMap.containsKey(0)) {
+      return "";
+    }
+    var file = fileMap[1];
+    if(file==null){
+      return "";
+    }
+    var chapter = await file.readAsString();
+//    debugPrint(chapter);
+    return chapter;
+  }
+
+  Future<Map<int,File>> getChapterFile(String bookId, int currentChapter) async {
+    Map<int,File> fileMap= new Map();
+    String chapterPath = await getChapterPath(bookId, currentChapter);
+    var file = new File(chapterPath);
+    try {
+      bool exists = await file.exists();
+      if (!exists) {
+        file = await file.create();
+        fileMap[0]=file;
+      }else if(await file.length()>50){
+        fileMap[1]=file;
+      }
+      return fileMap;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<String> getChapterPath(String bookId, int chapter) async {
+    var loaclPath = await localPath();
+    if (loaclPath != "") {
+      var directory =
+          new Directory("$loaclPath/book/$bookId${Platform.pathSeparator}");
+      directory.createSync(recursive: true);
+      var path = directory.path;
+      print("path:$path");
+      print("chapterpath:$path$chapter.txt");
+      return "$path$chapter.txt";
+    } else {
+      return "";
+    }
+  }
+
+  Future<String> localPath() async {
+    try {
+      var appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      print('文档目录: ' + appDocPath);
+      return appDocPath;
+    } catch (err) {
+      print(err);
+      return "";
     }
   }
 
@@ -136,6 +230,7 @@ class BookService{
       print(e.message);
     }
   }
+
   String encode(String encode) {
     if (encode == null) return "";
 

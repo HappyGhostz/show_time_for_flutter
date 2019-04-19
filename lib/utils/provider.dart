@@ -2,25 +2,32 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-
-class ProviderForDB{
+class ProviderForDB {
   static Database db;
-  Future init(bool isCreate) async{
+
+  Future init(bool isCreate) async {
     String dataBasesPath = await getDatabasesPath();
-    String path = join(dataBasesPath,'ShowTime.db');
+    String path = join(dataBasesPath, 'ShowTime.db');
     print("DatabasePath:$path");
-    try{
+    try {
 //      db = await openDatabase(path);
-      db = await openDatabase(path,version: 1,onCreate: (Database db,int version)async{
+      db = await openDatabase(path, version: 4,
+          onCreate: (Database db, int version) async {
         print('db created version is $version');
-        await db.execute('CREATE TABLE channel (id INTEGER PRIMARY KEY, name TEXT, typeId TEXT)');
-      },onOpen: (Database db){
+        await db.execute(
+            'CREATE TABLE channel (id INTEGER PRIMARY KEY, name TEXT, typeId TEXT)');
+      }, onOpen: (Database db) {
         print('new db opened');
-      },onUpgrade: (Database db, int oldVersion, int newVersion){
-        print('db oldVersion:$oldVersion');
-        print('db newVersion:$newVersion');
-      });
-    }catch(e){
+      }, onUpgrade: (Database db, int oldVersion, int newVersion) async{
+            if(newVersion==4){
+              await db.execute(
+                  'CREATE TABLE book (id INTEGER PRIMARY KEY, bookId TEXT, cover TEXT,author TEXT,majorCate TEXT,title TEXT,shortIntro TEXT,contentType TEXT,allowMonthly INTEGER ,hasCp INTEGER ,latelyFollower INTEGER ,retentionRatio REAL ,updated TEXT,chaptersCount INTEGER ,lastChapter TEXT)'
+              );
+            }
+            print('db oldVersion:$oldVersion');
+            print('db newVersion:$newVersion');
+          });
+    } catch (e) {
       print("DatabaseError:$e");
     }
 
@@ -43,26 +50,29 @@ class ProviderForDB{
 //      print("Opening existing database");
 //    }
   }
+
   //检查数据库中, 表是否完整, 在部份android中, 会出现表丢失的情况
-  Future checkTableIsAllRight()async{
+  Future checkTableIsAllRight() async {
     List<String> expectTables = ['channel'];
 
     List<String> tables = await getTables();
 
-    for(int i = 0; i < expectTables.length; i++) {
+    for (int i = 0; i < expectTables.length; i++) {
       if (!tables.contains(expectTables[i])) {
         return false;
       }
     }
     return true;
   }
-  Future getTables()async{
-    if(db==null){
+
+  Future getTables() async {
+    if (db == null) {
       return Future.value([]);
     }
-    List tables = await db.rawQuery('SELECT name FROM sqlite_master WHERE type = "table"');
-    List<String> targetList =[];
-    tables.forEach((item){
+    List tables = await db
+        .rawQuery('SELECT name FROM sqlite_master WHERE type = "table"');
+    List<String> targetList = [];
+    tables.forEach((item) {
       targetList.add(item['name']);
     });
     return targetList;
