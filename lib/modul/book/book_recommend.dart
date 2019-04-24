@@ -72,6 +72,7 @@ class Books {
 
   factory Books.fromJson(Map<String, dynamic> srcJson) => _$BooksFromJson(srcJson);
   Map<String, dynamic> toJson() => _$BooksToJson(this);
+
 }
 
 class BookModel{
@@ -82,6 +83,33 @@ class BookModel{
   }
   Future close() async{
     sqlHelper.close();
+  }
+  Future<Books> getBookByCondition(String bookId)async{
+    Map<dynamic, dynamic> conditions =Map();
+    conditions["bookId"]=bookId;
+    var list = await sqlHelper.getByCondition(conditions: conditions);
+    List<Books> books = list.map((mapjson){
+      Map<String, dynamic> map = Map<String, dynamic>.from(mapjson);
+      if(map["allowMonthly"]==1){
+        map["allowMonthly"]=true;
+      }else{
+        map["allowMonthly"]=false;
+      }
+      if(map["hasCp"]==1){
+        map["hasCp"]=true;
+      }else{
+        map["hasCp"]=false;
+      }
+      map["_id"] = map["bookId"];
+      return new Books.fromJson(map);
+    }).toList();
+    if(books==null||books.length==0){
+      return null;
+    }else{
+      var book = books[0];
+      return book;
+    }
+
   }
 
   Future<List<Books>>  getSaveBooks()async{
@@ -98,6 +126,7 @@ class BookModel{
       }else{
         map["hasCp"]=false;
       }
+      map["_id"] = map["bookId"];
       return new Books.fromJson(map);
     }).toList();
     return books;
@@ -115,6 +144,8 @@ class BookModel{
     }else{
       json["hasCp"]=0;
     }
+    json["bookId"] = json["_id"];
+    json.remove("_id");
 
     Map<String, dynamic> bookMap = await sqlHelper.insert(json);
     if(json["allowMonthly"]==1){
@@ -127,6 +158,7 @@ class BookModel{
     }else{
       json["hasCp"]=false;
     }
+    json["_id"] = json["bookId"];
     return new Books.fromJson(bookMap);
   }
 

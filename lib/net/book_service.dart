@@ -1,8 +1,6 @@
 import 'package:show_time_for_flutter/net/net_utils.dart';
 import 'package:dio/dio.dart';
 import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:show_time_for_flutter/modul/book/book_recommend.dart';
 import 'package:show_time_for_flutter/modul/book/book_category.dart';
@@ -13,6 +11,10 @@ import 'package:show_time_for_flutter/modul/book/read/chapter_body.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:show_time_for_flutter/event/book_download_event.dart';
+import 'package:show_time_for_flutter/modul/book/detail/book_detail.dart';
+import 'package:show_time_for_flutter/modul/book/detail/hot_review.dart';
+import 'package:show_time_for_flutter/modul/book/detail/recommend_list.dart';
+import 'package:show_time_for_flutter/modul/book/detail/recommends_detail.dart';
 
 /**
  * @author zcp
@@ -117,7 +119,70 @@ class BookService {
       printError(e);
     }
   }
-
+  /**
+   * 获取书籍详情数据
+   */
+  Future<BookDetail> getBookDetail(String bookId) async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/book/$bookId");
+      var data = response.data;
+      BookDetail bookDetail = BookDetail.fromJson(data);
+      return bookDetail;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  Future<BookHotReview> getBookHotReview(String bookId) async {
+    Map<String, dynamic> querys = Map();
+    querys["book"] = bookId;
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/review/best-by-book",queryParameters: querys);
+      var data = response.data;
+      BookHotReview bookHotReview = BookHotReview.fromJson(data);
+      return bookHotReview;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  Future<BookRecommends> getBookRecommendList(String bookId) async {
+    Map<String, dynamic> querys = Map();
+    querys["limit"] = "5";
+    try {
+      //404
+      var response =
+      await bookClient.get("/book-list/$bookId/recommend",queryParameters: querys);
+      var data = response.data;
+      BookRecommends bookRecommends = BookRecommends.fromJson(data);
+      return bookRecommends;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取书单详情
+   *
+   * @return
+   */
+  Future<BookRecommendsDetail> getRecommendBookListDetail(String bookId) async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/book-list/$bookId");
+      var data = response.data;
+      BookRecommendsDetail bookRecommendsDetail = BookRecommendsDetail.fromJson(data);
+      return bookRecommendsDetail;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
   Future<ChapterBody> getChapterBody(String chapterLink) async {
     try {
       Dio boolClient = new Dio();

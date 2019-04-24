@@ -1,4 +1,3 @@
-
 /**
  * @author zcp
  * @date 2019/3/29
@@ -85,4 +84,14 @@ class StringUtils {
   static int toMonths(double date) => (toDays(date) / 30).ceil();
 
   static int toYears(double date) => (toMonths(date) / 365).ceil();
+
+  static String formatWordCount(int wordCount) {
+    if (wordCount / 10000 > 0) {
+      return (wordCount / 10000 + 0.5).toInt().toString() + "万字";
+    } else if (wordCount / 1000 > 0) {
+      return (wordCount / 1000 + 0.5).toInt().toString() + "千字";
+    } else {
+      return wordCount.toString() + "字";
+    }
+  }
 }

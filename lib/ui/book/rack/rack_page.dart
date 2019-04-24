@@ -6,6 +6,9 @@ import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/utils/string_format.dart';
 import 'package:show_time_for_flutter/ui/book/read/read_page.dart';
 import 'package:flutter/services.dart';
+import 'package:show_time_for_flutter/event/event_bus.dart';
+import 'package:show_time_for_flutter/ui/book/detail/book_detail.dart';
+
 /**
  * @author zcp
  * @date 2019/3/29
@@ -18,6 +21,7 @@ class BookRackPage extends StatefulWidget {
 
 class BookRackPageState extends State<BookRackPage> with AutomaticKeepAliveClientMixin{
   BookService _bookService = BookService();
+  BookModel _bookModel=  BookModel();
   List<Books> books = [];
 
   @override
@@ -27,8 +31,12 @@ class BookRackPageState extends State<BookRackPage> with AutomaticKeepAliveClien
   }
 
   Future<void> loadData() async {
-    BookRecommend bookRecommend = await _bookService.getRecomendBooks();
-    books = bookRecommend.books;
+    books = await _bookModel.getSaveBooks();
+    if(books.length==0){
+      BookRecommend bookRecommend = await _bookService.getRecomendBooks();
+      books = bookRecommend.books;
+      await _bookModel.insertSomeChannel(books);
+    }
     setState(() {});
   }
 
@@ -78,6 +86,12 @@ class BookRackPageState extends State<BookRackPage> with AutomaticKeepAliveClien
           return ReadPage(book: book);
         }));
       },
+      onLongPress: (){
+        showDialog(context: context,
+        builder: (BuildContext context){
+          return _showDialogItem(context,book,index);
+        });
+      },
       child: Container(
         child: Row(
           children: <Widget>[
@@ -126,4 +140,77 @@ class BookRackPageState extends State<BookRackPage> with AutomaticKeepAliveClien
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  Widget _showDialogItem(BuildContext context,Books book,int index) {
+    return SimpleDialog(
+      title: Text("${book.title}"),
+      children: <Widget>[
+        Container(
+          child: FlatButton(onPressed: () {
+            setOne(book);
+
+            setState(() {
+            });
+            Navigator.pop(context, "后面50章");
+          }, child: Text("置顶")),
+        ),
+        Container(
+          child: FlatButton(onPressed: () {
+            Navigator.of(context).pop();
+            _toBookDetail(book);
+          }, child: Text("书籍详情")),
+        ),
+        Container(
+          child: FlatButton(
+            onPressed: () {
+              download(book);
+              Navigator.of(context).pop();
+            },
+            child: Text("缓存全部"),
+          ),
+        ),
+        Container(
+          child: FlatButton(
+            onPressed: () {
+              deleteOne(book);
+              Navigator.of(context).pop();
+            },
+            child: Text("删除"),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void deleteOne(Books book)async {
+    books.remove(book);
+    var count = await _bookModel.deleteAllBooks();
+    if(count!=0){
+      await _bookModel.insertSomeChannel(books);
+      setState(() {
+      });
+    }
+  }
+
+  void setOne(Books book) async{
+    books.remove(book);
+    books.insert(0, book);
+    var count = await _bookModel.deleteAllBooks();
+    if(count!=0){
+      await _bookModel.insertSomeChannel(books);
+    }
+  }
+
+  void download(Books book) async{
+    var chapterBook = await _bookService.getBook(book.bookId);
+    var chapters = chapterBook.mixToc.chapters;
+     _bookService.downloadChapter(eventBus,
+        book.bookId, chapters, 0, chapters.length-1);
+  }
+
+  void _toBookDetail(Books book) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+      return BookDetailPage(bookId: book.bookId,);
+    }));
+  }
 }

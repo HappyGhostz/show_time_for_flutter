@@ -256,9 +256,15 @@ class ReadPageState extends State<ReadPage> with TickerProviderStateMixin {
     var chapter = await _bookService.loadChapterFile(widget.book.bookId, currentChapter);
     if (chapter!="") {
       print("local");
-      var list = chapter.split("|");
-      title = list[0];
-      body = "      " +list[1].replaceAll("\n", "\n     ");
+      if(chapter.contains("|")){
+        var list = chapter.split("|");
+        title = list[0];
+        body = "      " +list[1].replaceAll("\n", "\n     ");
+      }else{
+        title="";
+        body = "      " +chapter.replaceAll("\n", "\n     ");
+      }
+
     }else{
       ChapterBody chapterBody =
       await _bookService.getChapterBody(chapters[currentChapter].link);
