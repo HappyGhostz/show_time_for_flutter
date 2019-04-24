@@ -15,6 +15,7 @@ import 'package:show_time_for_flutter/modul/book/detail/book_detail.dart';
 import 'package:show_time_for_flutter/modul/book/detail/hot_review.dart';
 import 'package:show_time_for_flutter/modul/book/detail/recommend_list.dart';
 import 'package:show_time_for_flutter/modul/book/detail/recommends_detail.dart';
+import 'package:show_time_for_flutter/modul/book/category/category_bean.dart';
 
 /**
  * @author zcp
@@ -178,6 +179,36 @@ class BookService {
       var data = response.data;
       BookRecommendsDetail bookRecommendsDetail = BookRecommendsDetail.fromJson(data);
       return bookRecommendsDetail;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 按分类获取书籍列表
+   *
+   * @param gender male、female
+   * @param type   hot(热门)、new(新书)、reputation(好评)、over(完结)
+   * @param major  玄幻
+   * @param minor  东方玄幻、异界大陆、异界争霸、远古神话
+   * @param limit  50
+   * @return
+   */
+  Future<BookCategorys> getBooksByCats(String gender,String type,String major,int start) async {
+    Map<String, dynamic> querys = Map();
+    querys["gender"] = gender;
+    querys["type"] = type;
+    querys["major"] = major;
+    querys["minor"] = "";
+    querys["start"] = start;
+    querys["limit"] = 30;
+    try {
+      //404
+      var response =
+      await bookClient.get("/book/by-categories",queryParameters: querys);
+      var data = response.data;
+      BookCategorys bookCategorys = BookCategorys.fromJson(data);
+      return bookCategorys;
     } on DioError catch (e) {
       printError(e);
       return null;
