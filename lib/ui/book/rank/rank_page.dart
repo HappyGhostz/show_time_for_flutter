@@ -3,6 +3,8 @@ import 'package:show_time_for_flutter/net/book_service.dart';
 import 'package:show_time_for_flutter/modul/book/rank/rank_book.dart';
 import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
+import 'package:show_time_for_flutter/ui/book/rank/rank_tab.dart';
+import 'package:show_time_for_flutter/ui/book/rank/rank_other.dart';
 
 /**
  * @author zcp
@@ -120,7 +122,7 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
             } else {
               final i = index ~/ 2;
               var male = males[i];
-              return _buildItem(IMG_BASE_URL + male.cover, male.title);
+              return _buildItem("male",i,IMG_BASE_URL + male.cover, male.title);
             }
           }, childCount: (males.length-expandMales.length) * 2+1)
           ),
@@ -158,7 +160,7 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
             } else {
               final i = index ~/ 2;
               var female = females[i];
-              return _buildItem(IMG_BASE_URL + female.cover, female.title);
+              return _buildItem("female",i,IMG_BASE_URL + female.cover, female.title);
             }
           }, childCount: (females.length -expandFemales.length) * 2+1)
           ),
@@ -177,7 +179,7 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
             } else {
               final i = index ~/ 2;
               var picture = pictures[i];
-              return _buildItem(IMG_BASE_URL + picture.cover, picture.title);
+              return _buildItem("picture",i,IMG_BASE_URL + picture.cover, picture.title);
             }
           }, childCount: pictures.length * 2)
           ),
@@ -196,7 +198,7 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
             } else {
               final i = index ~/ 2;
               var epub = epubs[i];
-              return _buildItem(IMG_BASE_URL + epub.cover, epub.title);
+              return _buildItem("epub",i,IMG_BASE_URL + epub.cover, epub.title);
             }
           }, childCount: epubs.length * 2)
           ),
@@ -213,6 +215,11 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
     for (int i = 0; i < expandMales.length; i++) {
       var expandMale = expandMales[i];
       var gestureDetector = GestureDetector(
+        onTap: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankOtherListPage(id: expandMale.id,title: expandMale.title);
+          }));
+        },
         child: Container(
           padding:EdgeInsets.all(15.0) ,
           child: Row(
@@ -242,6 +249,11 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
     for (int i = 0; i < expandFemales.length; i++) {
       var expandFemale = expandFemales[i];
       var gestureDetector = GestureDetector(
+        onTap: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankOtherListPage(id: expandFemale.id,title: expandFemale.title);
+          }));
+        },
         child: Container(
           padding:EdgeInsets.all(15.0) ,
           child: Row(
@@ -263,8 +275,31 @@ class BookRankPageState extends State<BookRankPage> with AutomaticKeepAliveClien
     return widgets;
   }
 
-  Widget _buildItem(String iconPath, String title) {
+  Widget _buildItem(String tag,int index,String iconPath, String title) {
     return GestureDetector(
+      onTap: (){
+        if(tag=="male"){
+          var male = males[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankTabPage(id: male.id,title: male.title,monthRank: male.monthRank,totalRank: male.totalRank,);
+          }));
+        }else if(tag=="female"){
+          var female = females[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankTabPage(id: female.id,title: female.title,monthRank: female.monthRank,totalRank: female.totalRank,);
+          }));
+        }else if(tag=="picture"){
+          var picture = pictures[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankOtherListPage(id: picture.id,title: picture.title);
+          }));
+        }else if(tag=="epub"){
+          var epub = epubs[index];
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return RankOtherListPage(id: epub.id,title: epub.title);
+          }));
+        }
+      },
       child: Container(
         padding:EdgeInsets.all(15.0) ,
         child: Row(

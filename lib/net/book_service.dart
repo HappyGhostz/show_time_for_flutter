@@ -18,6 +18,7 @@ import 'package:show_time_for_flutter/modul/book/detail/recommends_detail.dart';
 import 'package:show_time_for_flutter/modul/book/category/category_bean.dart';
 import 'package:show_time_for_flutter/modul/book/help/help_detail.dart';
 import 'package:show_time_for_flutter/modul/book/help/comments.dart';
+import 'package:show_time_for_flutter/modul/book/rank/rank_detial.dart';
 
 /**
  * @author zcp
@@ -273,6 +274,27 @@ class BookService {
       var data = response.data;
       CommentList commentList = CommentList.fromJson(data);
       return commentList;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取单一排行榜
+   * 周榜：rankingId->_id
+   * 月榜：rankingId->monthRank
+   * 总榜：rankingId->totalRank
+   *
+   * @return
+   */
+  Future<RankDetail> getRankingList(String rankingId) async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/ranking/$rankingId");
+      var data = response.data;
+      RankDetail rankDetail = RankDetail.fromJson(data);
+      return rankDetail;
     } on DioError catch (e) {
       printError(e);
       return null;
