@@ -5,6 +5,7 @@ import 'package:show_time_for_flutter/widgets/error_loading.dart';
 import 'package:show_time_for_flutter/widgets/load_more.dart';
 import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/utils/string_format.dart';
+import 'package:show_time_for_flutter/ui/book/community/book_help.dart';
 
 /**
  * @author zcp
@@ -126,86 +127,92 @@ class BookCommunityPageState extends State<BookCommunityPage> with AutomaticKeep
     } else if (help?.state == "normal") {
       visibilty = 3;
     }
-    return Container(
-      padding: EdgeInsets.all(10.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(right: 10.0),
-            child: ClipOval(
-              child: ImageUtils.showFadeImageForSize(
-                  IMG_BASE_URL + help.author.avatar, 55.0, 55.0, BoxFit.cover),
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return BookHelpDetailPage(helpId: help.id,);
+        }));
+      },
+      child: Container(
+        padding: EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 10.0),
+              child: ClipOval(
+                child: ImageUtils.showFadeImageForSize(
+                    IMG_BASE_URL + help.author.avatar, 55.0, 55.0, BoxFit.cover),
+              ),
             ),
-          ),
-          Expanded(
-              flex: 6,
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        "${help?.author?.nickname}lv.${help?.author?.lv} ",
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            color: Color.fromARGB(225, 165, 141, 61)),
+            Expanded(
+                flex: 6,
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          "${help?.author?.nickname}lv.${help?.author?.lv} ",
+                          style: TextStyle(
+                              fontSize: 13.0,
+                              color: Color.fromARGB(225, 165, 141, 61)),
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        help?.title,
-                        style: TextStyle(color: Colors.black),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
+                      Container(
                         margin: EdgeInsets.only(top: 5.0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
+                        child: Text(
+                          help?.title,
+                          style: TextStyle(color: Colors.black),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 5.0),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
 
-                              child: Image.asset(
-                                "assets/images/ic_notif_post.png",
-                                height: 20,
-                                width: 20,
+                                child: Image.asset(
+                                  "assets/images/ic_notif_post.png",
+                                  height: 20,
+                                  width: 20,
+                                ),
                               ),
-                            ),
-                            Container(
-                              child: Text(
-                                "${help?.commentCount}",
-                                style: TextStyle(
-                                    fontSize: 13.0,
-                                    color: Color.fromARGB(225, 178, 178, 178)),
+                              Container(
+                                child: Text(
+                                  "${help?.commentCount}",
+                                  style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: Color.fromARGB(225, 178, 178, 178)),
+                                ),
                               ),
-                            ),
-                            visibilty == 3
-                                ? Container(
-                                    margin: EdgeInsets.only(left: 5.0),
-                                    child: Text(
-                                      latelyUpdate,
-                                      style: TextStyle(
-                                          fontSize: 13.0,
-                                          color: Color.fromARGB(
-                                              225, 178, 178, 178)),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                : Container()
-                          ],
-                        )),
-                  ],
-                ),
-              )),
-          Expanded(
-              child: Container(
-            child: Stack(
-              children: <Widget>[
-                visibilty == 2
-                    ? Container(
+                              visibilty == 3
+                                  ? Container(
+                                margin: EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  latelyUpdate,
+                                  style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: Color.fromARGB(
+                                          225, 178, 178, 178)),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                                  : Container()
+                            ],
+                          )),
+                    ],
+                  ),
+                )),
+            Expanded(
+                child: Container(
+                  child: Stack(
+                    children: <Widget>[
+                      visibilty == 2
+                          ? Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(3.0)),
                           color: Colors.red,
@@ -221,14 +228,14 @@ class BookCommunityPageState extends State<BookCommunityPage> with AutomaticKeep
                             Text(
                               "热门",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 8.0),
+                              TextStyle(color: Colors.white, fontSize: 8.0),
                             )
                           ],
                         ),
                       )
-                    : Container(),
-                visibilty == 1
-                    ? Container(
+                          : Container(),
+                      visibilty == 1
+                          ? Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(3.0)),
                           color: Colors.red,
@@ -244,16 +251,17 @@ class BookCommunityPageState extends State<BookCommunityPage> with AutomaticKeep
                             Text(
                               "精品",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 8.0),
+                              TextStyle(color: Colors.white, fontSize: 8.0),
                             )
                           ],
                         ),
                       )
-                    : Container(),
-              ],
-            ),
-          ))
-        ],
+                          : Container(),
+                    ],
+                  ),
+                ))
+          ],
+        ),
       ),
     );
   }

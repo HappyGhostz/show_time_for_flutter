@@ -16,6 +16,8 @@ import 'package:show_time_for_flutter/modul/book/detail/hot_review.dart';
 import 'package:show_time_for_flutter/modul/book/detail/recommend_list.dart';
 import 'package:show_time_for_flutter/modul/book/detail/recommends_detail.dart';
 import 'package:show_time_for_flutter/modul/book/category/category_bean.dart';
+import 'package:show_time_for_flutter/modul/book/help/help_detail.dart';
+import 'package:show_time_for_flutter/modul/book/help/comments.dart';
 
 /**
  * @author zcp
@@ -209,6 +211,68 @@ class BookService {
       var data = response.data;
       BookCategorys bookCategorys = BookCategorys.fromJson(data);
       return bookCategorys;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取书荒区帖子详情
+   *
+   * @param helpId->_id
+   * @return
+   */
+  Future<BookHelpDetail> getBookHelpDetail(String helpId) async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/help/$helpId");
+      var data = response.data;
+      BookHelpDetail bookHelpDetail = BookHelpDetail.fromJson(data);
+      return bookHelpDetail;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取神评论列表(综合讨论区、书评区、书荒区皆为同一接口)
+   *
+   * @param disscussionId->_id
+   * @return
+   */
+  Future<CommentList> getBestComments(String disscussionId) async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/$disscussionId/comment/best");
+      var data = response.data;
+      CommentList commentList = CommentList.fromJson(data);
+      return commentList;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取书评区、书荒区帖子详情内的评论列表
+   *
+   * @param bookReviewId->_id
+   * @param start             0
+   * @param limit             30
+   * @return
+   */
+  Future<CommentList> getBookReviewComments(String disscussionId) async {
+    Map<String, dynamic> querys = Map();
+    querys["start"] = 0;
+    querys["limit"] = 50;
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/review/$disscussionId/comment",queryParameters: querys);
+      var data = response.data;
+      CommentList commentList = CommentList.fromJson(data);
+      return commentList;
     } on DioError catch (e) {
       printError(e);
       return null;
