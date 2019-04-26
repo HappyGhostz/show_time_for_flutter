@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'package:show_time_for_flutter/ui/book/read/read_page.dart';
 import 'package:show_time_for_flutter/ui/book/detail/book_recommends_detail.dart';
+import 'package:show_time_for_flutter/ui/book/community/book_help.dart';
+import 'package:show_time_for_flutter/ui/book/community/book_talk.dart';
 
 /**
  * @author zcp
@@ -50,7 +52,7 @@ class BookDetailPageState extends State<BookDetailPage> {
   List<Booklists> booklists;
   bool isExpand = false;
 
-  bool isSaveBook=false;
+  bool isSaveBook = false;
 
   @override
   void initState() {
@@ -63,8 +65,8 @@ class BookDetailPageState extends State<BookDetailPage> {
     bookHotReview = await _bookService.getBookHotReview(widget.bookId);
     bookRecommends = await _bookService.getBookRecommendList(widget.bookId);
     Books bookByCondition = await _bookModel.getBookByCondition(widget.bookId);
-    if(bookByCondition!=null&&bookByCondition.bookId==widget.bookId){
-      isSaveBook=true;
+    if (bookByCondition != null && bookByCondition.bookId == widget.bookId) {
+      isSaveBook = true;
     }
     reviews = bookHotReview.reviews;
     booklists = bookRecommends.booklists;
@@ -221,144 +223,168 @@ class BookDetailPageState extends State<BookDetailPage> {
       children: <Widget>[
         ImageUtils.showFadeImageForSize(
             IMG_BASE_URL + bookDetail.cover, 75.0, 55.0, BoxFit.cover),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
-              child: Text(
-                bookDetail.title,
-                style: TextStyle(fontSize: 16.0, color: Color(0xff212121)),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+        Expanded(
+            child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
+                child: Text(
+                  bookDetail.title,
+                  style: TextStyle(fontSize: 16.0, color: Color(0xff212121)),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    "${bookDetail.author} | ",
-                    style: TextStyle(fontSize: 13.0, color: Color(0xffDE6014)),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  Text(
-                    "${bookDetail.cat} | ",
-                    style: TextStyle(fontSize: 13.0, color: Color(0xff727272)),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  Text(
-                    "${StringUtils.formatWordCount(bookDetail.wordCount)}",
-                    style: TextStyle(fontSize: 13.0, color: Color(0xff727272)),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ],
+              Container(
+                margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "${bookDetail.author} | ",
+                      style:
+                          TextStyle(fontSize: 13.0, color: Color(0xffDE6014)),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Text(
+                      "${bookDetail.cat} | ",
+                      style:
+                          TextStyle(fontSize: 13.0, color: Color(0xff727272)),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Text(
+                      "${StringUtils.formatWordCount(bookDetail.wordCount)}",
+                      style:
+                          TextStyle(fontSize: 13.0, color: Color(0xff727272)),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
-              child: Text(
-                "${StringUtils.getDescriptionTimeFromDateString(bookDetail.updated)}",
-                style: TextStyle(fontSize: 13.0, color: Color(0xff727272)),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+              Container(
+                margin: EdgeInsets.only(left: 4.0, bottom: 10.0),
+                child: Text(
+                  "${StringUtils.getDescriptionTimeFromDateString(bookDetail.updated)}",
+                  style: TextStyle(fontSize: 13.0, color: Color(0xff727272)),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
-            ),
-          ],
-        )
+            ],
+          ),
+        ))
       ],
     );
   }
 
   Widget _builderAddOrRead() {
-    return new Builder(builder: (BuildContext context){
+    return new Builder(builder: (BuildContext context) {
       return Container(
         child: Row(
           children: <Widget>[
             Expanded(
               child: GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     _saveBook(context);
                   },
-                  child:isSaveBook?Container(
-                    margin: EdgeInsets.only(right: 5.0),
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    decoration: BoxDecoration(
-                        color: Color(0xff959595),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3.0),
-                        )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.remove,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "不追了",
-                          style: TextStyle(color: Colors.white),
+                  child: isSaveBook
+                      ? Container(
+                          margin: EdgeInsets.only(right: 5.0),
+                          padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          decoration: BoxDecoration(
+                              color: Color(0xff959595),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3.0),
+                              )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                              ),
+                              Text(
+                                "不追了",
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
+                          ),
                         )
-                      ],
-                    ),
-                  ): Container(
-                    margin: EdgeInsets.only(right: 5.0),
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3.0),
+                      : Container(
+                          margin: EdgeInsets.only(right: 5.0),
+                          padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3.0),
+                              )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                              Text(
+                                "追更新",
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
+                          ),
                         )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "追更新",
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ],
-                    ),
-                  )),
             ),
             Expanded(
                 child: GestureDetector(
-                  child: Container(
-                    margin: EdgeInsets.only(left: 5.0),
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3.0),
-                        )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "开始阅读",
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ],
+              child: Container(
+                margin: EdgeInsets.only(left: 5.0),
+                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(3.0),
+                    )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.search,
+                      color: Colors.white,
                     ),
-                  ),
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-                      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-                      Books book = Books(bookDetail.bookId, bookDetail.cover, bookDetail.author, bookDetail.majorCate, bookDetail.title, "", bookDetail.contentType, bookDetail.allowMonthly, bookDetail.hasCp, bookDetail.latelyFollower, 0.0, bookDetail.updated, bookDetail.chaptersCount, bookDetail.lastChapter);
-                      return ReadPage(book: book);
-                    }));
-                  },
-                )),
+                    Text(
+                      "开始阅读",
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  SystemChrome.setEnabledSystemUIOverlays(
+                      [SystemUiOverlay.bottom]);
+                  Books book = Books(
+                      bookDetail.bookId,
+                      bookDetail.cover,
+                      bookDetail.author,
+                      bookDetail.majorCate,
+                      bookDetail.title,
+                      "",
+                      bookDetail.contentType,
+                      bookDetail.allowMonthly,
+                      bookDetail.hasCp,
+                      bookDetail.latelyFollower,
+                      0.0,
+                      bookDetail.updated,
+                      bookDetail.chaptersCount,
+                      bookDetail.lastChapter);
+                  return ReadPage(book: book);
+                }));
+              },
+            )),
           ],
         ),
       );
@@ -465,7 +491,11 @@ class BookDetailPageState extends State<BookDetailPage> {
 
   Widget _builderTopComments() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return BookTalkTabPage(bookId: bookDetail.bookId,bookTitle: bookDetail.title,);
+        }));
+      },
       child: Container(
         padding: EdgeInsets.all(15.0),
         child: Row(
@@ -486,89 +516,96 @@ class BookDetailPageState extends State<BookDetailPage> {
   }
 
   Widget _buildHotReviewItem(Reviews review) {
-    return Container(
-      padding: EdgeInsets.all(10.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(
-              right: 10.0,
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return BookHelpDetailPage(helpId: review.id,);
+        }));
+      },
+      child: Container(
+        padding: EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(
+                right: 10.0,
+              ),
+              child: ClipOval(
+                child: ImageUtils.showFadeImageForSize(
+                    IMG_BASE_URL + review.author.avatar,
+                    55.0,
+                    55.0,
+                    BoxFit.cover),
+              ),
             ),
-            child: ClipOval(
-              child: ImageUtils.showFadeImageForSize(
-                  IMG_BASE_URL + review.author.avatar,
-                  55.0,
-                  55.0,
-                  BoxFit.cover),
-            ),
-          ),
-          Expanded(
-              flex: 6,
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        "${review?.author?.nickname}lv.${review?.author?.lv} ",
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            color: Color.fromARGB(225, 165, 141, 61)),
+            Expanded(
+                flex: 6,
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          "${review?.author?.nickname}lv.${review?.author?.lv} ",
+                          style: TextStyle(
+                              fontSize: 13.0,
+                              color: Color.fromARGB(225, 165, 141, 61)),
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        review?.title,
-                        style: TextStyle(color: Colors.black),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Container(
+                        margin: EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          review?.title,
+                          style: TextStyle(color: Colors.black),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: Row(
-                        children: _buildStarCount(review),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5.0),
-                      child: Text(
-                        "${review?.content}",
-                        style:
-                            TextStyle(fontSize: 13.0, color: Color(0xff727272)),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                      ),
-                    ),
-                    Container(
+                      Container(
                         margin: EdgeInsets.only(top: 5.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(right: 5.0),
-                              child: Image.asset(
-                                "assets/images/post_item_like.png",
-                                height: 13,
-                                width: 13,
+                          children: _buildStarCount(review),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          "${review?.content}",
+                          style:
+                          TextStyle(fontSize: 13.0, color: Color(0xff727272)),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(right: 5.0),
+                                child: Image.asset(
+                                  "assets/images/post_item_like.png",
+                                  height: 13,
+                                  width: 13,
+                                ),
                               ),
-                            ),
-                            Container(
-                              child: Text(
-                                "${review?.helpful?.yes}",
-                                style: TextStyle(
-                                    fontSize: 13.0, color: Color(0xffB2B2B2)),
+                              Container(
+                                child: Text(
+                                  "${review?.helpful?.yes}",
+                                  style: TextStyle(
+                                      fontSize: 13.0, color: Color(0xffB2B2B2)),
+                                ),
                               ),
-                            ),
-                          ],
-                        )),
-                  ],
-                ),
-              )),
-        ],
+                            ],
+                          )),
+                    ],
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -596,37 +633,47 @@ class BookDetailPageState extends State<BookDetailPage> {
   }
 
   Widget _buildJumpCommunity() {
-    return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                child: Text(
-                  "${bookDetail.title}的社区",
-                  style: TextStyle(color: Color(0xff212121), fontSize: 15.0),
-                ),
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return BookTalkTabPage(bookId: bookDetail.bookId,bookTitle: bookDetail.title,);
+        }));
+      },
+      child: Container(
+        padding: EdgeInsets.all(15.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+                child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          "${bookDetail.title}的社区",
+                          style: TextStyle(color: Color(0xff212121), fontSize: 15.0),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          "共有${bookDetail.postCount}个帖子",
+                          style: TextStyle(color: Color(0xff727272), fontSize: 13.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            Center(
+              child: Icon(
+                Icons.navigate_next,
+                color: Colors.grey,
               ),
-              Container(
-                padding: EdgeInsets.only(top: 5.0),
-                child: Text(
-                  "共有${bookDetail.postCount}个帖子",
-                  style: TextStyle(color: Color(0xff727272), fontSize: 13.0),
-                ),
-              ),
-            ],
-          ),
-          Center(
-            child: Icon(
-              Icons.navigate_next,
-              color: Colors.grey,
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -634,8 +681,11 @@ class BookDetailPageState extends State<BookDetailPage> {
   Widget _buildRecommendBookItem(Booklists booklist) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-          return BookRecommendDetail(bookId: booklist.id,);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (BuildContext context) {
+          return BookRecommendDetail(
+            bookId: booklist.id,
+          );
         }));
       },
       child: Container(
@@ -711,32 +761,42 @@ class BookDetailPageState extends State<BookDetailPage> {
     );
   }
 
-  void _saveBook(BuildContext context)async {
-    Books book = Books(bookDetail.bookId, bookDetail.cover, bookDetail.author, bookDetail.majorCate, bookDetail.title, "", bookDetail.contentType, bookDetail.allowMonthly, bookDetail.hasCp, bookDetail.latelyFollower, 0.0, bookDetail.updated, bookDetail.chaptersCount, bookDetail.lastChapter);
-    if(isSaveBook){
+  void _saveBook(BuildContext context) async {
+    Books book = Books(
+        bookDetail.bookId,
+        bookDetail.cover,
+        bookDetail.author,
+        bookDetail.majorCate,
+        bookDetail.title,
+        "",
+        bookDetail.contentType,
+        bookDetail.allowMonthly,
+        bookDetail.hasCp,
+        bookDetail.latelyFollower,
+        0.0,
+        bookDetail.updated,
+        bookDetail.chaptersCount,
+        bookDetail.lastChapter);
+    if (isSaveBook) {
       var count = await _bookModel.deleteSelectChannel(book);
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("已从书架移除！"),
         duration: Duration(milliseconds: 300),
       ));
-      if(count!=0){
-        isSaveBook=false;
-        setState(() {
-        });
+      if (count != 0) {
+        isSaveBook = false;
+        setState(() {});
       }
-    }else{
+    } else {
       var books = await _bookModel.insertSelectChannel(book);
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("已加入书架！"),
         duration: Duration(milliseconds: 300),
       ));
-      if(books.bookId==bookDetail.bookId){
-        isSaveBook=true;
-        setState(() {
-
-        });
+      if (books.bookId == bookDetail.bookId) {
+        isSaveBook = true;
+        setState(() {});
       }
     }
   }
-
 }

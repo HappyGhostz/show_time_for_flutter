@@ -64,8 +64,8 @@ class _HtmlViewState extends State<HtmlView> {
   /// Signals failure in building HTML.
   void failToBuild() {
     Timer.run(() => setState(() {
-      _didFailToParse = true;
-    }));
+          _didFailToParse = true;
+        }));
   }
 
   /// Fires the [onTapLink] callback with [href].
@@ -149,10 +149,12 @@ class HtmlViewBuilder extends StatelessWidget {
           return new HtmlFontTag(node);
         case 'hr':
           return new HtmlHr(node);
+        case 'img':
+          return new HtmlImg(node);
         default:
 
-        /// Any other tags cannot be built by this widget, and will cause the
-        /// plaintext to show.
+          /// Any other tags cannot be built by this widget, and will cause the
+          /// plaintext to show.
           HtmlView.of(context).failToBuild();
       }
     }
@@ -179,7 +181,7 @@ class HtmlLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(
-    element.localName == 'a', 'Expected <a> tag, instead found $element');
+        element.localName == 'a', 'Expected <a> tag, instead found $element');
 
     var href = element.attributes['href'];
 
@@ -191,6 +193,22 @@ class HtmlLink extends StatelessWidget {
         onPressed: () => HtmlView.of(context).onTapLink(href));
   }
 }
+/// Builds a link from a template <a href="">Some Text</a> tag.
+class HtmlImg extends StatelessWidget {
+  final dom.Element element;
+
+  HtmlImg(this.element);
+
+  @override
+  Widget build(BuildContext context) {
+    assert(
+        element.localName == 'img', 'Expected <img> tag, instead found $element');
+
+    var src = element.attributes['src'];
+
+    return Image.network(src);
+  }
+}
 
 /// Builds a table from a template <table>...</table> tag.
 ///
@@ -200,10 +218,11 @@ class HtmlTable extends StatelessWidget {
   final dom.Element element;
 
   HtmlTable(this.element);
+
   @override
   Widget build(BuildContext context) {
     assert(element.localName == 'table',
-    'Expected <table>, instead found $element');
+        'Expected <table>, instead found $element');
 
     var body = element.children
         .firstWhere((el) => el.localName == 'tbody', orElse: () => null);
@@ -246,7 +265,7 @@ class HtmlDiv extends StatelessWidget {
     return new Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children:
-      element.nodes.map((node) => new HtmlViewBuilder(node: node)).toList(),
+          element.nodes.map((node) => new HtmlViewBuilder(node: node)).toList(),
     );
   }
 }
@@ -322,13 +341,13 @@ class HtmlFontTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(
-    element.localName == 'font', 'Expected <font>, instead found $element');
+        element.localName == 'font', 'Expected <font>, instead found $element');
 
     Color color;
     try {
       var raw = int.parse(element.attributes['color'], radix: 16);
       color =
-      new Color.fromRGBO(raw >> 32, (raw >> 16) & 0xFF, raw & 0xFF, 1.0);
+          new Color.fromRGBO(raw >> 32, (raw >> 16) & 0xFF, raw & 0xFF, 1.0);
     } on FormatException catch (_) {
       color = Colors.black;
     }

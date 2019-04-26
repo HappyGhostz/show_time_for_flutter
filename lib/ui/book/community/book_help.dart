@@ -6,6 +6,7 @@ import 'package:show_time_for_flutter/utils/image_utils.dart';
 import 'package:show_time_for_flutter/utils/string_format.dart';
 import 'package:show_time_for_flutter/widgets/html_widget.dart';
 import 'package:show_time_for_flutter/modul/book/help/comments.dart';
+import 'package:show_time_for_flutter/ui/book/search/book_search.dart';
 
 /**
  * @author zcp
@@ -155,6 +156,21 @@ class BookHelpDetailPageState extends State<BookHelpDetailPage> {
       replace = replace.replaceAll(m.group(0),
           '<a href="${m.group(0)}" style="color:#FF0000;">${m.group(0)}</a>');
     }
+    RegExp regimg = new RegExp("{{(.*?)}}");
+    Iterable<Match> matchesImg = regimg.allMatches(replace);
+    for (Match m in matchesImg) {
+      var group = m.group(0);
+      RegExp regimgSrc = new RegExp("http(.*?),");
+      Iterable<Match> matchesImg = regimgSrc.allMatches(m.group(0));
+      for (Match m in matchesImg) {
+        var replaceAll = m.group(0).replaceAll(",", "");
+        var encodeUrl = _bookService.decode(replaceAll);
+        replace = replace.replaceAll(group,
+          '<img src="$encodeUrl"  alt="" />');
+      }
+
+
+    }
     return Container(
       padding: EdgeInsets.all(15.0),
       child: Column(
@@ -214,6 +230,11 @@ class BookHelpDetailPageState extends State<BookHelpDetailPage> {
                     content: replace,
                     onTapLink: (String href) {
                       print("href:$href");
+                      var replaceAll = href.replaceAll("《", "");
+                      var key = replaceAll.replaceAll("》", "");
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return BookSearchPage(searchKey:key,);
+                      }));
                     }),
           ),
           Container(

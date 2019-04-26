@@ -19,6 +19,10 @@ import 'package:show_time_for_flutter/modul/book/category/category_bean.dart';
 import 'package:show_time_for_flutter/modul/book/help/help_detail.dart';
 import 'package:show_time_for_flutter/modul/book/help/comments.dart';
 import 'package:show_time_for_flutter/modul/book/rank/rank_detial.dart';
+import 'package:show_time_for_flutter/modul/book/help/discussion_list.dart';
+import 'package:show_time_for_flutter/modul/book/search/auto_complete.dart';
+import 'package:show_time_for_flutter/modul/book/search/hot_key.dart';
+import 'package:show_time_for_flutter/modul/book/search/search_result.dart';
 
 /**
  * @author zcp
@@ -149,6 +153,68 @@ class BookService {
       var data = response.data;
       BookHotReview bookHotReview = BookHotReview.fromJson(data);
       return bookHotReview;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取书籍详情书评列表
+   *
+   * @param book  bookId
+   * @param sort  updated(默认排序)
+   * created(最新发布)
+   * helpful(最有用的)
+   * comment-count(最多评论)
+   * @param start 0
+   * @param limit 20
+   * @return
+   */
+  Future<BookHotReview> getBookDetailReviewList(String bookId,int start) async {
+    Map<String, dynamic> querys = Map();
+    querys["book"] = bookId;
+    querys["sort"] = "updated";
+    querys["start"] = start;
+    querys["limit"] = 30;
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/review/by-book",queryParameters: querys);
+      var data = response.data;
+      BookHotReview bookHotReview = BookHotReview.fromJson(data);
+      return bookHotReview;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 获取书籍详情讨论列表
+   *
+   * @param book  bookId
+   * @param sort  updated(默认排序)
+   * created(最新发布)
+   * comment-count(最多评论)
+   * @param type  normal
+   * vote
+   * @param start 0
+   * @param limit 20
+   * @return
+   */
+  Future<Discussions> getBookDetailDisscussionList(String bookId,int start) async {
+    Map<String, dynamic> querys = Map();
+    querys["book"] = bookId;
+    querys["sort"] = "updated";
+    querys["type"] = "normal,vote";
+    querys["start"] = start;
+    querys["limit"] = 30;
+    try {
+      //404
+      var response =
+      await bookClient.get("/post/by-book",queryParameters: querys);
+      var data = response.data;
+      Discussions bookCommunity = Discussions.fromJson(data);
+      return bookCommunity;
     } on DioError catch (e) {
       printError(e);
       return null;
@@ -300,6 +366,61 @@ class BookService {
       return null;
     }
   }
+  /**
+   * 关键字自动补全
+   *
+   * @param query
+   * @return
+   */
+  Future<AutoComplete> autoComplete(String query) async {
+    Map<String, dynamic> querys = Map();
+    querys["query"] = query;
+    try {
+      //404
+      var response =
+      await bookClient.get("/book/auto-complete",queryParameters: querys);
+      var data = response.data;
+      AutoComplete autoComplete = AutoComplete.fromJson(data);
+      return autoComplete;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  Future<HotKeyWord> getHotWord() async {
+    try {
+      //404
+      var response =
+      await bookClient.get("/book/hot-word");
+      var data = response.data;
+      HotKeyWord hotKeyWord = HotKeyWord.fromJson(data);
+      return hotKeyWord;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
+  /**
+   * 书籍查询
+   *
+   * @param query
+   * @return
+   */
+  Future<BookSearchResult> searchBooks(String query) async {
+    Map<String, dynamic> querys = Map();
+    querys["query"] = query;
+    try {
+      //404
+      var response =
+      await bookClient.get("/book/fuzzy-search",queryParameters: querys);
+      var data = response.data;
+      BookSearchResult bookSearchResult = BookSearchResult.fromJson(data);
+      return bookSearchResult;
+    } on DioError catch (e) {
+      printError(e);
+      return null;
+    }
+  }
   Future<ChapterBody> getChapterBody(String chapterLink) async {
     try {
       Dio boolClient = new Dio();
@@ -418,6 +539,15 @@ class BookService {
 
     try {
       return Uri.encodeQueryComponent(encode);
+    } catch (e) {
+      print(e.message);
+    }
+  }
+  String decode(String encode) {
+    if (encode == null) return "";
+
+    try {
+      return Uri.decodeComponent(encode);
     } catch (e) {
       print(e.message);
     }

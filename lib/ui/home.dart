@@ -10,6 +10,8 @@ import 'package:show_time_for_flutter/ui/book/rack/rack_page.dart';
 import 'package:show_time_for_flutter/ui/book/category/book_category.dart';
 import 'package:show_time_for_flutter/ui/book/community/community_book.dart';
 import 'package:show_time_for_flutter/ui/book/rank/rank_page.dart';
+import 'package:show_time_for_flutter/ui/book/search/book_search.dart';
+import 'package:show_time_for_flutter/widgets/search_hero.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -51,7 +53,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectDrawItemIndex = -1;
   TextStyle style = TextStyle(color: Colors.black);
   TabController _tabController;
-  int _currentTabIndex=0;
+  int _currentTabIndex = 0;
 
   @override
   void initState() {
@@ -59,17 +61,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     channelModel = new ChannelModel();
     initSelectChannels();
     _tabController = TabController(vsync: this, length: tabs.length);
-    _tabController.addListener((){
+    _tabController.addListener(() {
       _currentTabIndex = _tabController.index;
     });
   }
 
   changeTabController() {
     _tabController = TabController(vsync: this, length: tabs.length);
-    if(_currentTabIndex>0&&_currentTabIndex<tabs.length){
+    if (_currentTabIndex > 0 && _currentTabIndex < tabs.length) {
       _tabController.animateTo(_currentTabIndex);
     }
-    _tabController.addListener((){
+    _tabController.addListener(() {
       _currentTabIndex = _tabController.index;
     });
   }
@@ -89,10 +91,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   List<Widget> buildTabs() {
     List<Widget> widgets = new List<Widget>();
-    if(tabs==null){
+    if (tabs == null) {
       widgets.add(new Tab());
       return widgets;
-    };
+    }
+    ;
     if (_selectedIndex == 0) {
       widgets = tabs.map((channel) {
         return new Tab(
@@ -145,23 +148,23 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }).toList();
     } else if (_selectedIndex == 2) {
       widgets = musicTabs.map((title) {
-        if(title=="本地音乐"){
+        if (title == "本地音乐") {
           return new LocalMusicPage();
-        }else if(title=="推荐歌单"){
+        } else if (title == "推荐歌单") {
           return new RecommendSonsPage();
-        }else if(title=="排行榜"){
+        } else if (title == "排行榜") {
           return new MusicRankPage();
         }
       }).toList();
     } else if (_selectedIndex == 3) {
       widgets = bookTabs.map((title) {
-        if(title=="书架"){
+        if (title == "书架") {
           return BookRackPage();
-        }else if(title=="分类"){
+        } else if (title == "分类") {
           return BookCategoryPage();
-        }else if(title=="社区"){
+        } else if (title == "社区") {
           return BookCommunityPage();
-        }else if(title=="排行榜"){
+        } else if (title == "排行榜") {
           return BookRankPage();
         }
       }).toList();
@@ -191,7 +194,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       bottomNavigationBar: Theme(
           data: ThemeData(
               canvasColor: Colors.red,
-              textTheme: Theme.of(context).textTheme.copyWith(caption: style)),
+              textTheme: Theme
+                  .of(context)
+                  .textTheme
+                  .copyWith(caption: style)),
           child: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -276,7 +282,22 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ];
     } else if (_selectedIndex == 3) {
       return <Widget>[
-        IconButton(icon: Icon(Icons.search), onPressed: () {}),
+        SearchHero(
+          width: 30.0,
+          search: "search",
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return BookSearchPage();
+            }));
+          },
+        ),
+//        IconButton(
+//            icon: Icon(Icons.search),
+//            onPressed: () {
+//              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//                return BookSearchPage();
+//              }));
+//            }),
         IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
       ];
     }
@@ -309,7 +330,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return GestureDetector(
       child: Container(
         color:
-            _selectDrawItemIndex == drawItemIndex ? Colors.grey : Colors.white,
+        _selectDrawItemIndex == drawItemIndex ? Colors.grey : Colors.white,
         child: Row(
           children: <Widget>[
             Container(
