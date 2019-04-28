@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayer/audioplayer.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:show_time_for_flutter/utils/string_format.dart';
 
 /**
  * @author zcp
@@ -240,7 +241,7 @@ class PlayerState extends State<Player> {
               padding: EdgeInsets.only(left: 10.0),
               child: Center(
                 child: new Text(
-                  position == null ? "--:--" : _formatDuration(position),
+                  position == null ? "--:--" : StringUtils.formatDuration(position),
                   style: TextStyle(color: widget.color),
                 ),
               ),
@@ -263,7 +264,7 @@ class PlayerState extends State<Player> {
               padding: EdgeInsets.only(right: 10.0),
               child: Center(
                 child: new Text(
-                  duration == null ? "--:--" : _formatDuration(duration),
+                  duration == null ? "--:--" : StringUtils.formatDuration(duration),
                   style: TextStyle(color: widget.color),
                 ),
               ),
@@ -272,14 +273,7 @@ class PlayerState extends State<Player> {
     );
   }
 
-  String _formatDuration(Duration d) {
-    int minute = d.inMinutes;
-    int second = (d.inSeconds > 60) ? (d.inSeconds % 60) : d.inSeconds;
-    String format = ((minute < 10) ? "0$minute" : "$minute") +
-        ":" +
-        ((second < 10) ? "0$second" : "$second");
-    return format;
-  }
+
   Future<void> play(String url,bool islocal) async {
     await audioPlayer.play(url,isLocal: islocal);
     isPlaying = true;

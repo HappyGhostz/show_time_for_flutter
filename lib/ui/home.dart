@@ -12,6 +12,8 @@ import 'package:show_time_for_flutter/ui/book/community/community_book.dart';
 import 'package:show_time_for_flutter/ui/book/rank/rank_page.dart';
 import 'package:show_time_for_flutter/ui/book/search/book_search.dart';
 import 'package:show_time_for_flutter/widgets/search_hero.dart';
+import 'package:show_time_for_flutter/ui/vidoe/video_page.dart';
+import 'package:show_time_for_flutter/ui/vidoe/video_page_category.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -34,7 +36,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ChannelModel channelModel;
   List<Channel> tabs = [];
-  List<String> videoTabs = ["史诗大片", "恢弘大剧", "本地视频"];
+  List<String> videoTabs = ["头条", "娱乐", "社会", "搞笑", "世界", "科技", "体育", "生活", "财富", "新知", "美食"];
+  List<String> videoTabscategoryIds = ["0", "4", "1", "7", "2", "8", "9", "5", "3", "10", "6"];
   List<String> bookTabs = ["书架", "分类", "社区", "排行榜"];
   List<String> musicTabs = ["本地音乐", "推荐歌单", "排行榜"];
   int _selectedIndex = 0;
@@ -126,7 +129,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   bool _isScrollable() {
-    if (_selectedIndex == 0) {
+    if (_selectedIndex == 0||_selectedIndex==1) {
       //||_selectedIndex==1
       return true;
     } else {
@@ -144,7 +147,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }).toList();
     } else if (_selectedIndex == 1) {
       widgets = videoTabs.map((title) {
-        return new Text(title);
+        String categoryId = getVideoCatagory(title);
+        if(categoryId=="0"){
+          return new VideoListPlayPage(categoryId: categoryId,);
+        }else{
+          return new VideoCategoryListPlayPage(categoryId: categoryId,);
+        }
       }).toList();
     } else if (_selectedIndex == 2) {
       widgets = musicTabs.map((title) {
@@ -364,5 +372,32 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   _onDrawItemSelect(int drawItemIndex) {
     _selectDrawItemIndex = drawItemIndex;
     setState(() {});
+  }
+//  ["头条", "娱乐", "社会", "搞笑", "世界", "科技", "体育", "生活", "财富", "新知", "美食"];
+//  ["0", "4", "1", "7", "2", "8", "9", "5", "3", "10", "6"];
+  String getVideoCatagory(String title) {
+    if(title=="头条"){
+      return "0";
+    }else if(title=="娱乐"){
+      return "4";
+    }else if(title=="社会"){
+      return "1";
+    }else if(title=="搞笑"){
+      return "7";
+    }else if(title=="世界"){
+      return "2";
+    }else if(title=="科技"){
+      return "8";
+    }else if(title=="体育"){
+      return "9";
+    }else if(title=="生活"){
+      return "5";
+    }else if(title=="财富"){
+      return "3";
+    }else if(title=="新知"){
+      return "10";
+    }else if(title=="美食"){
+      return "6";
+    }
   }
 }

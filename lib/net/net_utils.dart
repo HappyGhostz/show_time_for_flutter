@@ -47,4 +47,25 @@ class NetUtils {
     Dio boolClient = new Dio(options);
     return boolClient;
   }
+  Dio getVideoBaseClient() {
+    Map<String, dynamic> heeaders = new Map();
+    heeaders["X-Channel-Code"] ="official";
+    heeaders["X-Client-Agent"] ="Xiaomi";
+    heeaders["X-Client-Hash"] ="2f3d6ffkda95dlz2fhju8d3s6dfges3t";
+    heeaders["X-Client-ID"] ="123456789123456";
+    heeaders["X-Client-Version"] ="5.4.7";
+    heeaders["X-Long-Token"] ="";
+    heeaders["X-Platform-Type"] ="0";
+    heeaders["X-Platform-Version"] ="5.0";
+    heeaders["X-User-ID"] ="";
+    BaseOptions options = new BaseOptions(
+      baseUrl: Api.BASE_KANKAN_VIDEO_URL,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+      headers: heeaders,
+    );
+    Dio boolClient = new Dio(options);
+    return boolClient;
+  }
+
 }
