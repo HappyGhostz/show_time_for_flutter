@@ -71,7 +71,7 @@ class ChannelPageState extends State<ChannelPage>{
           Navigator.of(context).pop(categories);
         }),
       ),
-      body: CustomScrollView(
+      body: WillPopScope(child: CustomScrollView(
         physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         slivers: <Widget>[
           SliverToBoxAdapter(
@@ -90,7 +90,9 @@ class ChannelPageState extends State<ChannelPage>{
               return buildeGridItem(unSelectChannels[index],index,false);
             },childCount: unSelectChannels.length,),),
         ],
-      )
+      ), onWillPop: (){
+        Navigator.of(context).pop(categories);
+      })
     );
   }
   Widget _buildSelecthead(String channelTitle,String subtitle){

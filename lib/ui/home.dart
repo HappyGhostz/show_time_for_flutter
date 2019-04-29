@@ -96,7 +96,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Widget> buildTabs() {
     List<Widget> widgets = new List<Widget>();
     if (tabs == null) {
-      widgets.add(new Tab());
+      widgets.add(new Tab( text: "",));
       return widgets;
     }
     ;
