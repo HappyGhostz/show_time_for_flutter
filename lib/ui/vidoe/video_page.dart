@@ -23,7 +23,7 @@ class VideoListPlayPage extends StatefulWidget {
   State<StatefulWidget> createState() => VideoListPlayPageState();
 }
 
-class VideoListPlayPageState extends State<VideoListPlayPage> {
+class VideoListPlayPageState extends State<VideoListPlayPage> with AutomaticKeepAliveClientMixin{
   VideoServices _videoServices = VideoServices();
   List<DataList> dataList = [];
   int start = 0;
@@ -166,4 +166,7 @@ class VideoListPlayPageState extends State<VideoListPlayPage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

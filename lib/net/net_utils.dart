@@ -67,5 +67,25 @@ class NetUtils {
     Dio boolClient = new Dio(options);
     return boolClient;
   }
+  Dio getBeaturePicutureBaseClient() {
+    BaseOptions options = new BaseOptions(
+      baseUrl: Api.BEAUTY_PICYURE_URL,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+      method: "GET",
+    );
+    Dio boolClient = new Dio(options);
+    return boolClient;
+  }
+  Dio getWefalePicutureBaseClient() {
+    BaseOptions options = new BaseOptions(
+      baseUrl: Api.WELF_CROSS_URL,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+      method: "GET",
+    );
+    Dio boolClient = new Dio(options);
+    return boolClient;
+  }
 
 }

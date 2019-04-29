@@ -18,4 +18,12 @@ class RouterAnimationUtils{
       child: child, // child is the value returned by pageBuilder
     );
   }
+  static ScaleTransition createScaleTransition(
+      Animation<double> animation, Widget child) {
+    return new ScaleTransition(scale: new Tween<double>(
+      begin: 0.0,
+      end:1.0,
+    ).animate(animation),
+    alignment: Alignment.center,child: child,);
+  }
 }

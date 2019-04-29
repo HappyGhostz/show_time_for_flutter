@@ -5,8 +5,8 @@ class Api {
   static final String BASE_MUSIC_URL =
       "http://tingapi.ting.baidu.com/v1/restserver";
   static final String BASE_CROSS_URL = "http://iu.snssdk.com/neihan/stream/";
-  static final String WELF_CROSS_URL = "http://gank.io/";
-  static final String BEAUTY_PICYURE_URL = "http://image.baidu.com/data/";
+  static final String WELF_CROSS_URL = "http://gank.io";
+  static final String BEAUTY_PICYURE_URL = "http://image.baidu.com/data";
   static final String LIVE_BASE_URL = "http://api.maxjia.com/";
   static final String BASE_DOUYU_URL = "http://capi.douyucdn.cn/api/v1/";
 

@@ -14,6 +14,7 @@ import 'package:show_time_for_flutter/ui/book/search/book_search.dart';
 import 'package:show_time_for_flutter/widgets/search_hero.dart';
 import 'package:show_time_for_flutter/ui/vidoe/video_page.dart';
 import 'package:show_time_for_flutter/ui/vidoe/video_page_category.dart';
+import 'package:show_time_for_flutter/ui/picture/picture_tab.dart';
 
 class HomeWidget extends StatelessWidget {
   @override
@@ -364,6 +365,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
+        if(drawItemIndex==1){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
+            return BeautyPictureTabPage();
+          }));
+        }
         _onDrawItemSelect(drawItemIndex);
       },
     );

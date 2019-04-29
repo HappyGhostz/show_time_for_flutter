@@ -23,7 +23,7 @@ class VideoCategoryListPlayPage extends StatefulWidget {
   State<StatefulWidget> createState() => VideoCategoryListPlayPageState();
 }
 
-class VideoCategoryListPlayPageState extends State<VideoCategoryListPlayPage> {
+class VideoCategoryListPlayPageState extends State<VideoCategoryListPlayPage> with AutomaticKeepAliveClientMixin{
   VideoServices _videoServices = VideoServices();
   ScrollController _scrollController = new ScrollController();
   List<ContList> contLists = [];
@@ -236,4 +236,7 @@ class VideoCategoryListPlayPageState extends State<VideoCategoryListPlayPage> {
       child: LoadMorePage(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
