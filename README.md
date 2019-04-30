@@ -6,11 +6,22 @@ A new Flutter application.
 
 This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+## Screenshots
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_1_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_2_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_2_2.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_3_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_3_2.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_4_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_4_2.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_4_3.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_5_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_5_2.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_6_1.GIF)
+![Demo ScreenShots](https://github.com/HappyGhostz/show_time_for_flutter/tree/master/screenshot/flutter_6_2.GIF)
+
+## Statement
+
+该项目仅供交流学习使用，如有侵犯版权问题，可通知本人及时删除
