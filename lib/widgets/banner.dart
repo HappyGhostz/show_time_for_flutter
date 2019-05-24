@@ -233,7 +233,7 @@ class BannerViewState extends State<BannerView>
                     child: widget.hasTextinfo? Container(
                       width: MediaQuery.of(context).size.width,
                       height: widget.isShowTextInfoWidget?animation.value:0,
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.only(right: 8.0,left: 8.0,top: 8.0,bottom: 8.0),
                       color: widget.textBackgroundColor,
                       child: _bannerTextInfoWidget(),
                     ):Container(),
@@ -350,7 +350,7 @@ class BannerViewState extends State<BannerView>
   Widget _bannerTextInfoWidget() {
     return Opacity(opacity: opacityAnimation.value,
     child: Text(widget.itemTextInfo==null?"":widget.itemTextInfo(_currentIndex)==null?"":widget.itemTextInfo(_currentIndex),
-      style: TextStyle(color: Colors.white),));
+      style: TextStyle(color: Colors.white,fontSize: 12.0),));
   }
 
   List<Widget> _builderCriInd() {

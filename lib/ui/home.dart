@@ -71,7 +71,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   changeTabController() {
-    _tabController = TabController(vsync: this, length: tabs.length);
+    int length = 0;
+    if (_selectedIndex == 0) {
+      length=tabs.length;
+    } else if (_selectedIndex == 1) {
+      length=videoTabs.length;
+    } else if (_selectedIndex == 2) {
+      length=musicTabs.length;
+    } else if (_selectedIndex == 3) {
+      length=bookTabs.length;
+    }
+    _tabController = TabController(vsync: this, length: length);
     if (_currentTabIndex > 0 && _currentTabIndex < tabs.length) {
       _tabController.animateTo(_currentTabIndex);
     }
@@ -99,7 +109,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widgets.add(new Tab( text: "",));
       return widgets;
     }
-    ;
     if (_selectedIndex == 0) {
       widgets = tabs.map((channel) {
         return new Tab(
