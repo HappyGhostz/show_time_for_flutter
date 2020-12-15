@@ -6,6 +6,7 @@ A new Flutter application.
 
 This project is a starting point for a Flutter application.
 
+该项目已不再维护，仅供有兴趣者食用，对flutte_redux有兴趣者请移步https://github.com/HappyGhostz/flutter_wan_android
 
 ## Screenshots
 
